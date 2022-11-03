@@ -28,16 +28,10 @@ void printStartMenu() {
 	getch();	
 }
 
-void closeFiles() {
-	GameFile::TIME.close();
-	GameFile::GAME.close();
-}
-
 int main()
 {
 	initwindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 	printStartMenu();
-	closeFiles();
    	closegraph();
    	return 0;
 }

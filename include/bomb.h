@@ -84,12 +84,15 @@ class Game {
 		}
 
 		void updateGameTime() {
-			GameFile::TIME << score_board.getPlayTime() << '\n';
+			ofstream time_file(GameFile::TIME);
+			time_file << score_board.getPlayTime() << '\n';
+			time_file.close();
 		}
 
 		void removeBackupFile() {
-			GameFile::TIME.clear();
-			GameFile::GAME.clear();
+			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
+			game_file.clear();
+			time_file.clear();
 		}
 	
 	public:
@@ -218,9 +221,12 @@ class Game {
 		}
 
 		void saveGame() {
-			GameFile::TIME << score_board.getPlayTime() << '\n';
-			GameFile::GAME << height << ' ' << width << ' ' << num_bomb << ' ' << '\n';
-			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) GameFile::GAME << bombMap[i][j].encode() << " \n"[j == width-1]; 
+			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
+			time_file << score_board.getPlayTime() << '\n';
+			game_file << height << ' ' << width << ' ' << num_bomb << ' ' << '\n';
+			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) game_file << bombMap[i][j].encode() << " \n"[j == width-1]; 
+			time_file.close();
+			game_file.close();
 		}
 
 		void checkClickAndUpdate() {
@@ -240,7 +246,8 @@ class Game {
 			}
 
 			if (status == ON_GOING) checkWinGame();
-			else removeBackupFile();
+			
+			if (status != ON_GOING) removeBackupFile();
 
 			if (status == WIN_GAME) {
 				for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {

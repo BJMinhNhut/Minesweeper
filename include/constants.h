@@ -49,8 +49,8 @@ namespace MyColor {
 } 
 
 namespace GameFile {
-	std::fstream TIME("time.log");
-	std::fstream GAME("game.log");
+	const char TIME[] = "logs\\time.log";
+	const char GAME[] = "logs\\game.log";
 }
 
 #endif
