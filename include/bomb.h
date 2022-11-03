@@ -179,7 +179,7 @@ class Game {
 				for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) 
 					if (bombMap[i][j].hasBomb()) bombMap[i][j].revealBox();
 				return true;
-			} else {
+			} else if (bombMap[bombX][bombY].hidden()) {
 				//REVEAL BOX
 				revealAreaStartFrom(bombX, bombY);
 				if (DEBUG_MOUSE) for(int j = 0; j < width; ++j) for(int i = 0; i < height; ++i) cerr << bombMap[i][j].hidden() << " \n"[i == height-1];
@@ -220,11 +220,11 @@ class Game {
 			} else { 
 				if (enoughFlagged(bombX, bombY)) {
 					// OPEN SURROUND
-					bool result = true;
+					bool result = false;
 					for(int dir = 0; dir < 8; ++dir) {
 						int newX = bombX + NEXTX[dir], newY = bombY + NEXTY[dir];
 						if (!validPos(newX, newY) || bombMap[newX][newY].isFlagged()) continue;
-						result &= openBox(newX, newY);
+						result |= openBox(newX, newY);
  					}
 					return result;
 				} else {

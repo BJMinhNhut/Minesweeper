@@ -122,7 +122,7 @@ class Box {
 
 void decode(int val, Box &ans) {
 	ans.setAdj(val&(MASK(4)-1));
-	ans.setBomb(val&BIT(val, 4));
+	ans.setBomb(BIT(val, 4));
 	ans.setStatus(val >> 5);
 }
 #endif
