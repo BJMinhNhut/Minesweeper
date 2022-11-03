@@ -7,28 +7,20 @@
 #include <bits/stdc++.h>
 
 class Menu {
-		bool foundValidBackupFile() {
-			
-			return false;
-		}
-
-		void gameScreen(int game_mode) {
+		void runGame(Game &game) {
 			setbkcolor(MyColor::GAME_BG);
 			cleardevice();
 			clearmouseclick(WM_LBUTTONDOWN);
 			clearmouseclick(WM_RBUTTONDOWN);
-			int height, width, bomb; tie(height, width, bomb) = GameMode::PROPERTIES[game_mode]; 
-			Game newGame(height, width, bomb);
-			newGame.genRandomBombMap();
-
+			
 			int cnt = 0;
-			newGame.display();
-			newGame.saveGame();
-			while (newGame.onGoing()) {
-				newGame.checkClickAndUpdate();
+			game.display();
+			game.saveGame();
+			while (game.onGoing()) {
+				game.checkClickAndUpdate();
 			}
 
-			newGame.display();
+			game.display();
 
 			setcolor(MyColor::TEXT);
 			setbkcolor(MyColor::GAME_BG);
@@ -37,9 +29,17 @@ class Menu {
 			getch();
 		}
 
+		void genNewGame(int game_mode) {
+			int height, width, bomb; tie(height, width, bomb) = GameMode::PROPERTIES[game_mode]; 
+			Game newGame(height, width, bomb);
+			newGame.genRandomBombMap();
+
+			runGame(newGame);
+		}
+
 		void clearMenu() {
 			setfillstyle(SOLID_FILL, MyColor::GAME_BG);
-			bar(0, WINDOW_HEIGHT/2, WINDOW_WIDTH, WINDOW_HEIGHT);
+			bar(0, WINDOW_HEIGHT/2 - 50, WINDOW_WIDTH, WINDOW_HEIGHT);
 		}
 
 		void optionScreen() {
@@ -61,7 +61,7 @@ class Menu {
 				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 				for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
 					if (mode_butt[mode_id].isClicked(x, y)) {
-						gameScreen(mode_id);
+						genNewGame(mode_id);
 						return;
 					}
 				}
@@ -88,9 +88,11 @@ class Menu {
 			while (!ismouseclick(WM_LBUTTONDOWN)) {delay(1);}
 			int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 			if (newGameButt.isClicked(x, y)) {
-				if (foundValidBackupFile()) Window::newGameWarning();
-
-				optionScreen();
+				Game old_game;
+				if (old_game.foundValidBackupFile()) {
+					Window::newGameWarning();
+					runGame(old_game);
+				} else optionScreen();
 			} else if (exitGameButt.isClicked(x, y)) {
 				exit(EXIT_SUCCESS);
 			}

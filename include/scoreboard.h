@@ -19,7 +19,9 @@ class ScoreBoard {
 		}
 
 	public:
-		ScoreBoard(int x = 0, int y = 0, int sT = 0, int b = 0): posX(x), posY(y), startTime(sT), num_bomb(b), backupTime(0) {}
+		ScoreBoard(int x = 0, int y = 0, int sT = 0, int bomb = 0, int bk = 0): posX(x), posY(y), startTime(sT), num_bomb(bomb), backupTime(bk) {}
+
+		void setBackupTime(int val)	 {backupTime = val;}
 
 		int getPlayTime() {return clock()/1000 - startTime + backupTime;}
 

@@ -58,12 +58,17 @@ class Box {
 		Box(int l = 0, int t = 0, int r = 0, int b = 0, bool _has_bomb = 0): 
 			left(l), top(t), right(r), bot(b), has_bomb(_has_bomb), adj_bomb_num(0), display_status(0) {}
 
+		void setPos(int l, int t, int r, int b) {left = l, right = r, top = t, bot = b;}
+
 		bool hidden() {return display_status == HIDDEN;}
 		bool isFlagged() {return display_status == FLAGGED;}
+
 		int getStatus() {return display_status;}
+		void setStatus(int val) {display_status = val;}
+
 		void setBomb(bool state) {has_bomb = state;}
-		void setPos(int l, int t, int r, int b) {left = l, right = r, top = t, bot = b;}
 		bool hasBomb() {return has_bomb;}
+
 		void setAdj(int val) {adj_bomb_num = val;}
 		int getAdjBomb() {return adj_bomb_num;} 
 
@@ -113,13 +118,11 @@ class Box {
 		int encode() {
 			return adj_bomb_num + (has_bomb<<4) + (display_status<<5);
 		}
-
-		Box decode(int val) {
-			Box ans;
-			ans.setAdj(val&(MASK(4)-1));
-			ans.setBomb(val&BIT(val, 4));
-			ans.display_status = (val >> 5);
-			return ans;
-		}
 };
+
+void decode(int val, Box &ans) {
+	ans.setAdj(val&(MASK(4)-1));
+	ans.setBomb(val&BIT(val, 4));
+	ans.setStatus(val >> 5);
+}
 #endif

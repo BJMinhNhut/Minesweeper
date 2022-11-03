@@ -31,6 +31,7 @@ void printStartMenu() {
 int main()
 {
 	initwindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+	mkdir("savefiles");
 	printStartMenu();
    	closegraph();
    	return 0;

@@ -96,15 +96,21 @@ class Game {
 		}
 	
 	public:
-		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING) {
+
+		void initMap(int height, int width) {
 			bombMap.assign(height, vector<Box>(width, Box()));
-			assert(num_bomb <= height*width && height <= 50 && width <= 50);
 			
 			for(int i = 0; i < height; ++i) 
 			for(int j = 0; j < width; ++j) {
 				int left, right, top, bot; tie(left, top, right, bot) = getPosOfBox(i, j);
 				bombMap[i][j].setPos(left, top, right, bot);
 			}
+		}
+
+		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING) {
+			assert(num_bomb <= height*width && height <= 50 && width <= 50);
+			
+			initMap(height, width);
 
 			int top_box = get<1>(getPosOfBox(0, 0));
 			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb);
@@ -115,6 +121,26 @@ class Game {
 		bool onGoing() {return status == ON_GOING;}
 		bool lose() {return status == LOSE_GAME;}
 		bool win() {return status == WIN_GAME;}
+
+		bool foundValidBackupFile() {
+			/* Need to refactor this later */
+			ifstream game_file(GameFile::GAME), time_file(GameFile::TIME);
+			int backup_time;
+			if (!(time_file >> backup_time)) return false; 
+
+			if (!(game_file >> height >> width >> num_bomb)) return false;
+
+			if (!(num_bomb <= height*width && height <= 50 && width <= 50)) return false;
+			initMap(height, width);
+
+			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {
+				int code; if (!(game_file >> code)) return false;
+				decode(code, bombMap[i][j]);
+			}
+			int top_box = get<1>(getPosOfBox(0, 0));
+			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb, backup_time);
+			return true;
+		}
 
 		void genRandomBombMap() {
 			srand(time(NULL));

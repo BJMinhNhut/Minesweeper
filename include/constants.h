@@ -49,8 +49,8 @@ namespace MyColor {
 } 
 
 namespace GameFile {
-	const char TIME[] = "logs\\time.log";
-	const char GAME[] = "logs\\game.log";
+	const char TIME[] = "savefiles\\time.log";
+	const char GAME[] = "savefiles\\game.log";
 }
 
 #endif

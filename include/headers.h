@@ -6,5 +6,6 @@
 #include "constants.h"
 #include <bits/stdc++.h>
 #include <graphics.h>
+#include <unistd.h>
 
 #endif
