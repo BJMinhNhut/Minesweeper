@@ -8,7 +8,7 @@ using namespace std;
 class ScoreBoard {
 	private:
 		int posX, posY;
-		int startTime, backupTime, num_bomb; //startTime: depend on the time player start game (not program)
+		int startTime, backupTime, num_flag; //startTime: depend on the time player start game (not program)
 
 		int getMin(int t) {
 			return t/60;
@@ -19,7 +19,7 @@ class ScoreBoard {
 		}
 
 	public:
-		ScoreBoard(int x = 0, int y = 0, int sT = 0, int bomb = 0, int bk = 0): posX(x), posY(y), startTime(sT), num_bomb(bomb), backupTime(bk) {}
+		ScoreBoard(int x = 0, int y = 0, int sT = 0, int flag = 0, int bk = 0): posX(x), posY(y), startTime(sT), num_flag(flag), backupTime(bk) {}
 
 		void setBackupTime(int val)	 {backupTime = val;}
 
@@ -32,10 +32,12 @@ class ScoreBoard {
 			return textheight(display_char);
 		}
 
+		void setFlag(int flag) {num_flag = flag;}
+
 		void display(int font, int font_size) {
 			int total_time = getPlayTime();
 			char display_char[30];
-			sprintf(display_char, "Time: %02d:%02d  Bomb: %03d", getMin(total_time), getSec(total_time), num_bomb);
+			sprintf(display_char, "Time: %02d:%02d  Flags: %03d", getMin(total_time), getSec(total_time), num_flag);
 			setfillstyle(SOLID_FILL, MyColor::GAME_BG);
 			settextstyle(font, HORIZ_DIR, font_size);
 			settextjustify(CENTER_TEXT, BOTTOM_TEXT);

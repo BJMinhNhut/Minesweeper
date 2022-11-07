@@ -13,7 +13,7 @@ class Game {
 
 		static const int ON_GOING = 0, LOSE_GAME = 1, WIN_GAME = 2;
 		vector<vector<Box>> bombMap;
-		int height, width, num_bomb;
+		int height, width, num_bomb, num_flag;
 		int status;
 		ScoreBoard score_board;
 
@@ -94,82 +94,18 @@ class Game {
 			game_file.clear();
 			time_file.clear();
 		}
-	
-	public:
 
-		void initMap(int height, int width) {
-			bombMap.assign(height, vector<Box>(width, Box()));
-			
-			for(int i = 0; i < height; ++i) 
-			for(int j = 0; j < width; ++j) {
-				int left, right, top, bot; tie(left, top, right, bot) = getPosOfBox(i, j);
-				bombMap[i][j].setPos(left, top, right, bot);
+		int cntFlagged(int bombX, int bombY) {
+			int ans = 0;
+			for(int dir = 0; dir < 8; ++dir) {
+				int newX = bombX+NEXTX[dir], newY = bombY+NEXTY[dir];
+				if (validPos(newX, newY) && bombMap[newX][newY].isFlagged()) ++ans; 
 			}
+			return ans;
 		}
 
-		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING) {
-			assert(num_bomb <= height*width && height <= 50 && width <= 50);
-			
-			initMap(height, width);
-
-			int top_box = get<1>(getPosOfBox(0, 0));
-			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb);
-		}
-
-		int getHeight() {return height;}
-		int getWidth() {return width;}
-		bool onGoing() {return status == ON_GOING;}
-		bool lose() {return status == LOSE_GAME;}
-		bool win() {return status == WIN_GAME;}
-
-		bool foundValidBackupFile() {
-			/* Need to refactor this later */
-			ifstream game_file(GameFile::GAME), time_file(GameFile::TIME);
-			int backup_time;
-			if (!(time_file >> backup_time)) return false; 
-
-			if (!(game_file >> height >> width >> num_bomb)) return false;
-
-			if (!(num_bomb <= height*width && height <= 50 && width <= 50)) return false;
-			initMap(height, width);
-
-			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {
-				int code; if (!(game_file >> code)) return false;
-				decode(code, bombMap[i][j]);
-			}
-			int top_box = get<1>(getPosOfBox(0, 0));
-			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb, backup_time);
-			return true;
-		}
-
-		void genRandomBombMap() {
-			srand(time(NULL));
-			vector<pair<int, int>> cand;
-			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) cand.push_back(make_pair(i, j));
-			random_shuffle(cand.begin(), cand.end());
-			for(int i = 0; i < num_bomb; ++i) {
-				int x, y; tie(x, y) = cand[i];
-				bombMap[x][y].setBomb(1);
-			}
-
-			calcAdjTable();
-		}
-		
-		void display() {
-			int box_size = getBoxSize();
-			for(int i = 0; i < height; ++i) 
-			for(int j = 0; j < width; ++j) {
-				bombMap[i][j].draw();
-			}
-
-			if (status == WIN_GAME) {
-				setcolor(GREEN);
-				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "WINNNNNN");
-			}
-			if (status == LOSE_GAME) {
-				setcolor(RED);
-				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "LOSEEEEE");
-			}
+		bool enoughFlagged(int bombX, int bombY) {
+			return cntFlagged(bombX, bombY) == bombMap[bombX][bombY].getAdjBomb();
 		}
 
 		bool openBox(int bombX, int bombY) {
@@ -186,19 +122,6 @@ class Game {
 				return true;
 			}
 			return false;
-		}
-		
-		int cntFlagged(int bombX, int bombY) {
-			int ans = 0;
-			for(int dir = 0; dir < 8; ++dir) {
-				int newX = bombX+NEXTX[dir], newY = bombY+NEXTY[dir];
-				if (validPos(newX, newY) && bombMap[newX][newY].isFlagged()) ++ans; 
-			}
-			return ans;
-		}
-
-		bool enoughFlagged(int bombX, int bombY) {
-			return cntFlagged(bombX, bombY) == bombMap[bombX][bombY].getAdjBomb();
 		}
 
 		bool checkLeftMouseClick() {
@@ -240,10 +163,89 @@ class Game {
 			getmouseclick(WM_RBUTTONDOWN, x, y);
 			tie(bombX, bombY) = getBombPos(x, y);
 			if (validPos(bombX, bombY) && (bombMap[bombX][bombY].hidden() || bombMap[bombX][bombY].isFlagged())) {
-				bombMap[bombX][bombY].toggleFlag(); 
+				num_flag += bombMap[bombX][bombY].toggleFlag(); 
+				score_board.setFlag(num_bomb - num_flag);
 				return true;
 			} else cerr << "Outside Box\n";		
 			return false;
+		}
+	
+	public:
+
+		void initMap(int height, int width) {
+			bombMap.assign(height, vector<Box>(width, Box()));
+			
+			for(int i = 0; i < height; ++i) 
+			for(int j = 0; j < width; ++j) {
+				int left, right, top, bot; tie(left, top, right, bot) = getPosOfBox(i, j);
+				bombMap[i][j].setPos(left, top, right, bot);
+			}
+		}
+
+		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
+			assert(num_bomb <= height*width && height <= 50 && width <= 50);
+			
+			initMap(height, width);
+
+			int top_box = get<1>(getPosOfBox(0, 0));
+			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb);
+		}
+
+		int getHeight() {return height;}
+		int getWidth() {return width;}
+		bool onGoing() {return status == ON_GOING;}
+		bool lose() {return status == LOSE_GAME;}
+		bool win() {return status == WIN_GAME;}
+
+		bool foundValidBackupFile() {
+			/* Need to refactor this later */
+			ifstream game_file(GameFile::GAME), time_file(GameFile::TIME);
+			int backup_time;
+			if (!(time_file >> backup_time)) return false; 
+
+			if (!(game_file >> height >> width >> num_bomb)) return false;
+
+			if (!(num_bomb <= height*width && height <= 50 && width <= 50)) return false;
+			initMap(height, width);
+
+			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {
+				int code; if (!(game_file >> code)) return false;
+				decode(code, bombMap[i][j]);
+				num_flag += bombMap[i][j].isFlagged();
+			}
+			int top_box = get<1>(getPosOfBox(0, 0));
+			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb-num_flag, backup_time);
+			return true;
+		}
+
+		void genRandomBombMap() {
+			srand(time(NULL));
+			vector<pair<int, int>> cand;
+			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) cand.push_back(make_pair(i, j));
+			random_shuffle(cand.begin(), cand.end());
+			for(int i = 0; i < num_bomb; ++i) {
+				int x, y; tie(x, y) = cand[i];
+				bombMap[x][y].setBomb(1);
+			}
+
+			calcAdjTable();
+		}
+		
+		void display() {
+			int box_size = getBoxSize();
+			for(int i = 0; i < height; ++i) 
+			for(int j = 0; j < width; ++j) {
+				bombMap[i][j].draw();
+			}
+
+			if (status == WIN_GAME) {
+				setcolor(GREEN);
+				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "WINNNNNN");
+			}
+			if (status == LOSE_GAME) {
+				setcolor(RED);
+				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "LOSEEEEE");
+			}
 		}
 
 		void saveGame() {

@@ -103,11 +103,12 @@ class Box {
 			#endif
 		}
 
-		void toggleFlag() {
+		int toggleFlag() {
 			assert(display_status != REVEALED);
 			if (display_status == HIDDEN) display_status = FLAGGED;
 			else display_status = HIDDEN;
 			draw();
+			return display_status == HIDDEN ? -1 : 1;
 		}
 
 		void revealBox() {
