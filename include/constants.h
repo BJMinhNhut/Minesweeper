@@ -25,7 +25,7 @@ namespace GameMode {
 	const int NMODE = 4;
 	char *CAPTION[NMODE] = {"Custom", "Easy", "Normal", "Hard"};
 	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(10, 10, 12), 
-													std::make_tuple(20, 20, 50), std::make_tuple(30, 30, 100)};
+													std::make_tuple(20, 20, 40), std::make_tuple(30, 30, 100)};
 }
 
 namespace MyColor {

@@ -81,7 +81,7 @@ class Menu {
 			newGameButt.draw();
 
 			//Exit Game Button
-			curY += newGameButt.getHeight() + 20;
+			curY += newGameButt.getHeight() + 10;
 			Button exitGameButt(midx, curY, "Exit");
 			exitGameButt.draw();
 
@@ -90,8 +90,11 @@ class Menu {
 			if (newGameButt.isClicked(x, y)) {
 				Game old_game;
 				if (old_game.foundValidBackupFile()) {
-					Window::newGameWarning();
-					runGame(old_game);
+					clearMenu();
+					bool choice = Window::newGameWarning();
+					
+					if (choice == Window::CONTINUE) runGame(old_game);
+					else optionScreen();
 				} else optionScreen();
 			} else if (exitGameButt.isClicked(x, y)) {
 				exit(EXIT_SUCCESS);
