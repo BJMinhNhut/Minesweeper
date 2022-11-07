@@ -5,9 +5,13 @@
 #include <bits/stdc++.h>
 // #define _DEBUG_BOX_COLOR_
 
-const int WINDOW_HEIGHT = 700;
-const int WINDOW_WIDTH = 700;
+const int WINDOW_HEIGHT = 800;
+const int WINDOW_WIDTH = 1000;
 const char WINDOW_TITLE[] = "Minesweeper";	
+const int MAP_PADDING = 30;
+
+const int MENU_HEIGHT = 40, MENU_WIDTH = 200;
+const int OPTION_HEIGHT = 40, OPTION_WIDTH = 400;
 
 const int NEXTX[8] = {-1, 0, 1, 0, 1, -1, 1, -1};
 const int NEXTY[8] = {0, -1, 0, 1, -1, 1, 1, -1};
@@ -23,7 +27,7 @@ namespace GameMode {
 	const int HARD = 3;
 
 	const int NMODE = 4;
-	char *CAPTION[NMODE] = {"Custom", "Easy", "Normal", "Hard"};
+	char *CAPTION[NMODE] = {"Custom", "Easy (10x10, 12 bombs)", "Normal (20x20, 40 bombs)", "Hard (30x30, 100 bombs)"};
 	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(10, 10, 12), 
 													std::make_tuple(20, 20, 40), std::make_tuple(30, 30, 100)};
 }
@@ -46,6 +50,11 @@ namespace MyColor {
 	const int SEVEN = COLOR(183, 28, 28);
 	const int EIGHT = COLOR(136, 14, 79);
 
+	const int BUTTON = COLOR(69, 90, 100);
+	const int BUTTON_HOVER = COLOR(96, 125, 139);
+	const int BOX_HOVER = COLOR(92, 122, 56);
+	const int WINDOW_BG = WHITE;
+	const int WINDOW_TEXT = BLACK;
 } 
 
 namespace GameFile {

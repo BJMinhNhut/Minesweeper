@@ -20,11 +20,11 @@ void printStartMenu() {
 		cleardevice();
 
 		printTitle();
-		
+
 		Menu menu;
 		menu.display();
 	}
-
+	
 	getch();	
 }
 

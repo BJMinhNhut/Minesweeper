@@ -73,7 +73,8 @@ class Box {
 		int getAdjBomb() {return adj_bomb_num;} 
 
 		int getFontSize() {
-			if (bot-top > 25) return 2;
+			if (bot-top > 40) return 3;
+			else if (bot-top > 25) return 2;
 			else if (bot-top >= 15) return 1;
 			else return 4;
 		}
@@ -85,6 +86,12 @@ class Box {
 
 		bool isClicked(int x, int y) {
 			return x >= left && x <= right && y >= top && y <= bot;
+		}
+
+		bool checkHover() {
+			if (!hidden() || !isClicked(mousex(), mousey())) return false;
+			drawBox(MyColor::BOX_HOVER);
+			return true;
 		}
 
 		void draw() {

@@ -18,7 +18,7 @@ class Game {
 		ScoreBoard score_board;
 
 		int getBoxSize() {
-			return min({30, (WINDOW_HEIGHT-50)/height, (WINDOW_WIDTH-50)/width});
+			return min({50, (WINDOW_HEIGHT-MAP_PADDING)/height, (WINDOW_WIDTH-MAP_PADDING)/width});
 		}
 
 		pair<int, int> getBombPos(int x, int y) {
@@ -165,9 +165,20 @@ class Game {
 			if (validPos(bombX, bombY) && (bombMap[bombX][bombY].hidden() || bombMap[bombX][bombY].isFlagged())) {
 				num_flag += bombMap[bombX][bombY].toggleFlag(); 
 				score_board.setFlag(num_bomb - num_flag);
+				score_board.display(bombMap[0][0].getFontType(), bombMap[0][0].getFontSize());
 				return true;
 			} else cerr << "Outside Box\n";		
 			return false;
+		}
+
+		void checkHover() {
+			int x = mousex(), y = mousey();
+			int bombX, bombY; tie(bombX, bombY) = getBombPos(x, y);
+			static int lastX, lastY;
+			if (validPos(lastX, lastY)) bombMap[lastX][lastY].draw();
+			if (validPos(bombX, bombY) && bombMap[bombX][bombY].checkHover()) {
+				lastX = bombX, lastY = bombY;
+			} else lastX = -1, lastY = -1;
 		}
 	
 	public:
@@ -193,6 +204,7 @@ class Game {
 
 		int getHeight() {return height;}
 		int getWidth() {return width;}
+		int getNumBomb() {return num_bomb;}
 		bool onGoing() {return status == ON_GOING;}
 		bool lose() {return status == LOSE_GAME;}
 		bool win() {return status == WIN_GAME;}
@@ -260,17 +272,24 @@ class Game {
 		void checkClickAndUpdate() {
 			int cntLoops = 0;
 			while (1) {
+				bool has_update = false;
+
 				if (ismouseclick(WM_LBUTTONDOWN)) {
-					if (checkLeftMouseClick()) {saveGame(); break;}
+					has_update |= checkLeftMouseClick(); 
 				} else if (ismouseclick(WM_RBUTTONDOWN)) {
-					if (checkRightMouseClick()) {saveGame(); break;}			
-				}
+					has_update |= checkRightMouseClick(); 		
+				} else checkHover();
 
 				++cntLoops;
-				if (cntLoops%10 == 0) updateGameTime();
+				if (cntLoops%20 == 0) updateGameTime();
+				if (cntLoops%5 == 0) score_board.display(bombMap[0][0].getFontType(), bombMap[0][0].getFontSize());
 
-				score_board.display(bombMap[0][0].getFontType(), bombMap[0][0].getFontSize());
-				delay(100);
+				if (has_update) {
+					saveGame();
+					break;
+				}
+
+				delay(50);
 			}
 
 			if (status == ON_GOING) checkWinGame();

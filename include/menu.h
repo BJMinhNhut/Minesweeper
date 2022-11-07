@@ -22,11 +22,12 @@ class Menu {
 
 			game.display();
 
-			setcolor(MyColor::TEXT);
-			setbkcolor(MyColor::GAME_BG);
-			settextjustify(CENTER_TEXT, BOTTOM_TEXT);
-			outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT-10, "Press any key to go back to main menu...");
-			getch();
+			int choice = Window::endGameAnnouncement(game.win());
+			if (choice == Window::RESTART) {
+				Game newGame(game.getHeight(), game.getWidth(), game.getNumBomb());
+				newGame.genRandomBombMap();
+				runGame(newGame);
+			}
 		}
 
 		void genNewGame(int game_mode) {
@@ -51,13 +52,17 @@ class Menu {
 			int curY = midy;
 			vector<Button> mode_butt(GameMode::NMODE);
 			for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
-				mode_butt[mode_id] = Button(midx, curY, GameMode::CAPTION[mode_id]);
+				mode_butt[mode_id] = Button(OPTION_WIDTH, OPTION_HEIGHT, midx, curY, GameMode::CAPTION[mode_id]);
 				mode_butt[mode_id].draw();
-				curY += mode_butt[mode_id].getHeight() + 20;
+				curY += mode_butt[mode_id].getHeight() + 10;
 			}
 
 			while (1) {
-				while (!ismouseclick(WM_LBUTTONDOWN)) {delay(1);}
+				while (!ismouseclick(WM_LBUTTONDOWN)) {
+					for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
+						mode_butt[mode_id].checkHover();
+					}
+				}
 				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 				for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
 					if (mode_butt[mode_id].isClicked(x, y)) {
@@ -77,25 +82,32 @@ class Menu {
 			
 			//New Game Button
 			int curY = midy;
-			Button newGameButt(midx, curY, "New game");
+			Button newGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "New game");
 			newGameButt.draw();
 
 			//Exit Game Button
 			curY += newGameButt.getHeight() + 10;
-			Button exitGameButt(midx, curY, "Exit");
+			Button exitGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "Exit");
 			exitGameButt.draw();
 
-			while (!ismouseclick(WM_LBUTTONDOWN)) {delay(1);}
+			while (!ismouseclick(WM_LBUTTONDOWN)) {
+				newGameButt.checkHover(); 
+				exitGameButt.checkHover(); 
+			}
+
 			int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 			if (newGameButt.isClicked(x, y)) {
 				Game old_game;
 				if (old_game.foundValidBackupFile()) {
 					clearMenu();
-					bool choice = Window::newGameWarning();
+					int choice = Window::newGameWarning();
 					
 					if (choice == Window::CONTINUE) runGame(old_game);
+					else if (choice == Window::RETURN) {display(); return;}
 					else optionScreen();
+
 				} else optionScreen();
+
 			} else if (exitGameButt.isClicked(x, y)) {
 				exit(EXIT_SUCCESS);
 			}
