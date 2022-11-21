@@ -42,7 +42,7 @@ namespace MyColor {
 	// const int BUTTON = COLOR(29, 36, 50);
 	const int BUTTON = GAME_BG;
 	const int BUTTON_HOVER = COLOR(50, 199, 102);
-	const int BOX_HOVER = COLOR(46, 52, 65);
+	const int BOX_HOVER = COLOR(88, 93, 104);
 	const int WINDOW_BG = COLOR(29, 36, 50);
 	const int WINDOW_TEXT = WHITE;
 
@@ -57,7 +57,7 @@ namespace MyColor {
 	const int THREE = COLOR(27, 94, 32);
 	const int FOUR = COLOR(130, 119, 23);
 	const int FIVE = COLOR(255, 111, 0);
-	const int SIX = COLOR(191, 54, 12);
+	const int SIX = COLOR(191, 54, 12); 
 	const int SEVEN = COLOR(183, 28, 28);
 	const int EIGHT = COLOR(136, 14, 79);
 } 

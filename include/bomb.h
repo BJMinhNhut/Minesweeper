@@ -160,7 +160,7 @@ class Game {
 
 		string getBombLeft() {
 			char ans[30];
-			sprintf(ans, "%02d", num_bomb - num_flag);
+			sprintf(ans, "%04d", num_bomb - num_flag);
 			return ans;
 		}
 

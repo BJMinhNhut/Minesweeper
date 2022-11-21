@@ -43,6 +43,33 @@ class Menu {
 			bar(0, WINDOW_HEIGHT/2 - 50, WINDOW_WIDTH, WINDOW_HEIGHT);
 		}
 
+		void customScreen() {
+			clearMenu();
+			clearmouseclick(WM_LBUTTONDOWN);
+
+			Button return_butt(100, 30, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "RETURN");
+			Button go_butt(100, 30, WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50, "GO");
+			return_butt.draw();
+			go_butt.draw();
+
+			int height = 10, width = 10, bomb = 20;
+			while (1) {
+				if (ismouseclick(WM_LBUTTONDOWN)) {
+					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
+					if (return_butt.isClicked(x, y)) return;
+					if (go_butt.isClicked(x, y)) {
+						Game newGame(height, width, bomb);
+						newGame.genRandomBombMap();
+						runGame(newGame);
+						return;
+					}
+				} else {
+					return_butt.checkHover();
+					go_butt.checkHover();
+				}
+			}
+		}
+
 		void optionScreen() {
 			clearMenu();
 			clearmouseclick(WM_LBUTTONDOWN);
@@ -51,7 +78,7 @@ class Menu {
 			//New Game Button
 			int curY = midy;
 			vector<Button> mode_butt(GameMode::NMODE);
-			for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
+			for(int mode_id = 0; mode_id < GameMode::NMODE; ++mode_id) {
 				mode_butt[mode_id] = Button(OPTION_WIDTH, OPTION_HEIGHT, midx, curY, GameMode::CAPTION[mode_id]);
 				mode_butt[mode_id].draw();
 				curY += mode_butt[mode_id].getHeight() + 10;
@@ -59,14 +86,16 @@ class Menu {
 
 			while (1) {
 				while (!ismouseclick(WM_LBUTTONDOWN)) {
-					for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
+					for(int mode_id = 0; mode_id < GameMode::NMODE; ++mode_id) {
 						mode_butt[mode_id].checkHover();
 					}
 				}
 				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
+				if (mode_butt[0].isClicked(x, y)) {customScreen(); return;}
 				for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
 					if (mode_butt[mode_id].isClicked(x, y)) {
 						genNewGame(mode_id);
+						clearmouseclick(WM_LBUTTONDOWN);
 						return;
 					}
 				}

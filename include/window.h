@@ -10,20 +10,19 @@ namespace Window {
 	char *TITLE[2] = {"GAME OVER", "CONGRATULATIONS!"};
 
 	int endGameAnnouncement(bool win) {
-		setbkcolor(MyColor::WINDOW_BG);
-		setcolor(MyColor::WINDOW_TEXT);
 		char *title;
-		
-		settextstyle(BOLD_FONT, HORIZ_DIR, 5);
 
 		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
 
+		settextstyle(BOLD_FONT, HORIZ_DIR, 5);
 
 		Button menu_butt(100, 30, midx - 70, midy + textheight(TITLE[win]), "MENU");
 		Button restart_butt(100, 30, midx + 70, midy + textheight(TITLE[win]), "RESTART");
 
-		drawFrame(MyColor::WINDOW_BG, MyColor::WINDOW_TEXT, midx-textwidth(TITLE[win])-10, midy-textheight(TITLE[win])-10, midx+textwidth(TITLE[win])+10, midy + textheight(TITLE[win]) + menu_butt.getHeight() + 10);
-
+		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-textwidth(TITLE[win])-10, midy-textheight(TITLE[win])-10, midx+textwidth(TITLE[win])+10, midy + textheight(TITLE[win]) + menu_butt.getHeight() + 10);
+		
+		setbkcolor(MyColor::WINDOW_BG);
+		setcolor(MyColor::WINDOW_TEXT);
 		outtextxy(midx, midy, TITLE[win]);
 		menu_butt.draw();
 		restart_butt.draw();
@@ -41,8 +40,6 @@ namespace Window {
 	}
 
 	int newGameWarning() {
-		setbkcolor(MyColor::WINDOW_BG);
-		setcolor(MyColor::WINDOW_TEXT);
 		char *announce = "There is an old session not finished!";
 		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
 
@@ -57,11 +54,10 @@ namespace Window {
 
 		int width = 500, height = 500;
 		pos_y += no.getHeight() + 10;
-		setfillstyle(SOLID_FILL, MyColor::WINDOW_BG);
-		bar(midx-width/2, midy-textheight(announce) - 10, midx+width/2, pos_y);
-		rectangle(midx-width/2, midy-textheight(announce) - 10, midx+width/2, pos_y);
-		
+		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-width/2, midy-textheight(announce) - 10, midx+width/2, pos_y);
 		//PRINT CONTENT
+		setbkcolor(MyColor::WINDOW_BG);
+		setcolor(MyColor::WINDOW_TEXT);
 		outtextxy(midx, midy, announce);
 		outtextxy(midx, midy + textheight(announce), question);
 		yes.draw();
