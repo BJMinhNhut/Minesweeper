@@ -30,7 +30,7 @@ class Button {
 
 		void checkHover() {
 			if (!isClicked(mousex(), mousey())) return;
-			draw(MyColor::BUTTON_HOVER);
+			draw(MyColor::BUTTON_HOVER, MyColor::BUTTON);
 			while (!ismouseclick(WM_LBUTTONDOWN)) {
 				if (!isClicked(mousex(), mousey())) {
 					draw();
@@ -39,14 +39,14 @@ class Button {
 			}
 		}
 
-		void draw(int color = MyColor::BUTTON, int text_color = WHITE, bool has_border = true) {
-			if (has_border) {
-				setcolor(WHITE);
-				rectangle(left-1, top-1, right, bot);
-			}
-
+		void draw(int color = MyColor::BUTTON, int text_color = MyColor::BUTTON_HOVER, bool has_border = true) {
 			setfillstyle(SOLID_FILL, color);
 			bar(left, top, right, bot);
+
+			if (has_border) {
+				setcolor(text_color);
+				rectangle(left, top, right, bot);
+			}
 
 			setbkcolor(color);
 			setcolor(text_color);

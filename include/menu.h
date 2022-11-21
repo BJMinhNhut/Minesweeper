@@ -20,7 +20,7 @@ class Menu {
 				game.checkClickAndUpdate();
 			}
 
-			game.display();
+			// game.display();
 
 			int choice = Window::endGameAnnouncement(game.win());
 			if (choice == Window::RESTART) {

@@ -8,46 +8,33 @@ using namespace std;
 class ScoreBoard {
 	private:
 		int posX, posY;
-		int startTime, backupTime, num_flag; //startTime: depend on the time player start game (not program)
+		int height, width;
+		char *title; //startTime: depend on the time player start game (not program)
 
-		int getMin(int t) {
-			return t/60;
-		}
-
-		int getSec(int t) {
-			return t%60;
-		}
-
-	public:
-		ScoreBoard(int x = 0, int y = 0, int sT = 0, int flag = 0, int bk = 0): posX(x), posY(y), startTime(sT), num_flag(flag), backupTime(bk) {}
-
-		void setBackupTime(int val)	 {backupTime = val;}
-
-		int getPlayTime() {return clock()/1000 - startTime + backupTime;}
-
-		int getHeight() {
-			char display_char[30];
-			sprintf(display_char, "Temp");
-			settextstyle(BOLD_FONT, HORIZ_DIR, 2);
-			return textheight(display_char);
-		}
-
-		void setFlag(int flag) {num_flag = flag;}
-
-		void display(int font, int font_size) {
-			int total_time = getPlayTime();
-			char display_char[30];
-			sprintf(display_char, "Time: %02d:%02d  Flags: %03d", getMin(total_time), getSec(total_time), num_flag);
-			setfillstyle(SOLID_FILL, MyColor::GAME_BG);
+		void init_text(int font, int font_size) {
 			settextstyle(font, HORIZ_DIR, font_size);
 			settextjustify(CENTER_TEXT, BOTTOM_TEXT);
 			setbkcolor(MyColor::GAME_BG);
 			setcolor(MyColor::TEXT);
-			int height = textheight(display_char);
-			int width = textwidth(display_char);
-			bar(posX - width/2, posY - height, posX + (width+1)/2, posY);
-			outtextxy(posX, posY, display_char);
+		}
+
+	public:
+		ScoreBoard(char *_title = "", int x = 0, int y = 0, int h = 0, int w = 0): posX(x), posY(y), title(_title), height(h), width(w)  {}
+
+		void display(char *content, int font, int font_size) {
+			drawFrame(MyColor::GAME_BG, MyColor::BORDER, posX - width/2, posY - height/2, posX + (width+1)/2, posY + (height+1)/2);
+			line(posX - width/2, posY, posX + (width+1)/2, posY);
+			init_text(font, font_size);
+			outtextxy(posX, posY - 10, title);
+			outtextxy(posX, posY + 30, content);
 		} 
+
+		void update(char *content, int font, int font_size) {
+			setfillstyle(SOLID_FILL, MyColor::GAME_BG);
+			// bar(posX - textwidth(content)/2, posY + 30 - textheight(content)/2, posX + textwidth(content)/2, posY + 30 + textheight(content)/2);
+			init_text(font, font_size);
+			outtextxy(posX, posY + 30, content);
+		}
 };
 
 #endif

@@ -20,7 +20,10 @@
                 "-lcomdlg32",
                 "-luuid",
                 "-loleaut32",
-                "-lole32"
+                "-lole32",
+                "-static-libgcc",
+                "-static-libstdc++",
+                "-static"
             ]
         }
     ],

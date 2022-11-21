@@ -5,10 +5,13 @@
 #include <bits/stdc++.h>
 // #define _DEBUG_BOX_COLOR_
 
-const int WINDOW_HEIGHT = 800;
-const int WINDOW_WIDTH = 1000;
+const int WINDOW_HEIGHT = 750;
+const int WINDOW_WIDTH = 1200;
 const char WINDOW_TITLE[] = "Minesweeper";	
 const int MAP_PADDING = 30;
+const int SCOREBOARD_WIDTH = 120;
+const int SCOREBOARD_HEIGHT = 80;
+const int GAME_WIDTH = WINDOW_WIDTH - 4*MAP_PADDING - SCOREBOARD_WIDTH;
 
 const int MENU_HEIGHT = 40, MENU_WIDTH = 200;
 const int OPTION_HEIGHT = 40, OPTION_WIDTH = 400;
@@ -27,20 +30,28 @@ namespace GameMode {
 	const int HARD = 3;
 
 	const int NMODE = 4;
-	char *CAPTION[NMODE] = {"Custom", "Easy (10x10, 12 bombs)", "Normal (20x20, 40 bombs)", "Hard (30x30, 100 bombs)"};
-	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(10, 10, 12), 
-													std::make_tuple(20, 20, 40), std::make_tuple(30, 30, 100)};
+	char *CAPTION[NMODE] = {"Custom", "Easy (9x9, 10 bombs)", "Normal (16x16, 40 bombs)", "Hard (30x16, 99 bombs)"};
+	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(9, 9, 10), 
+													std::make_tuple(16, 16, 40), std::make_tuple(16, 30, 99)};
 }
 
 namespace MyColor {
-	const int GAME_BG = COLOR(64, 60, 57);
+	const int GAME_BG = COLOR(5, 12, 27);
 	const int TEXT = WHITE;
 
-	const int BORDER = COLOR(215, 215, 170);
-	const int FLAG = COLOR(255, 143, 0);
-	const int HIDDEN = COLOR(119, 148, 85);
-	const int REVEAL = COLOR(235, 235, 208);
-	const int BOMB_BG = COLOR(244, 67, 54);
+	// const int BUTTON = COLOR(29, 36, 50);
+	const int BUTTON = GAME_BG;
+	const int BUTTON_HOVER = COLOR(50, 199, 102);
+	const int BOX_HOVER = COLOR(46, 52, 65);
+	const int WINDOW_BG = COLOR(29, 36, 50);
+	const int WINDOW_TEXT = WHITE;
+
+	const int BORDER = COLOR(140, 150, 166);
+	const int FLAG = COLOR(50, 199, 102);
+	// const int HIDDEN = COLOR(29, 36, 50);
+	const int HIDDEN = WINDOW_BG;
+	const int REVEAL = WHITE;
+	const int BOMB_BG = COLOR(226, 81, 71);
 	const int ONE = COLOR(13, 70, 160);
 	const int TWO = COLOR(0, 96, 100);
 	const int THREE = COLOR(27, 94, 32);
@@ -49,17 +60,19 @@ namespace MyColor {
 	const int SIX = COLOR(191, 54, 12);
 	const int SEVEN = COLOR(183, 28, 28);
 	const int EIGHT = COLOR(136, 14, 79);
-
-	const int BUTTON = COLOR(69, 90, 100);
-	const int BUTTON_HOVER = COLOR(96, 125, 139);
-	const int BOX_HOVER = COLOR(92, 122, 56);
-	const int WINDOW_BG = WHITE;
-	const int WINDOW_TEXT = BLACK;
 } 
 
 namespace GameFile {
 	const char TIME[] = "savefiles\\time.log";
 	const char GAME[] = "savefiles\\game.log";
+}
+
+void drawFrame(int background, int color, int left, int top, int right, int bot) {
+	setbkcolor(background);
+	setcolor(color);
+	setfillstyle(SOLID_FILL, background);
+	bar(left, top, right, bot);
+	rectangle(left, top, right, bot);
 }
 
 #endif

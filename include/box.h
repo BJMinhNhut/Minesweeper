@@ -75,7 +75,7 @@ class Box {
 		int getFontSize() {
 			if (bot-top > 40) return 3;
 			else if (bot-top > 25) return 2;
-			else if (bot-top >= 15) return 1;
+			else if (bot-top >= 20) return 1;
 			else return 4;
 		}
 

@@ -14,19 +14,20 @@ class Game {
 		static const int ON_GOING = 0, LOSE_GAME = 1, WIN_GAME = 2;
 		vector<vector<Box>> bombMap;
 		int height, width, num_bomb, num_flag;
+		int start_time, backup_time;
 		int status;
-		ScoreBoard score_board;
+		ScoreBoard time_board, flag_board;
 
 		int getBoxSize() {
-			return min({50, (WINDOW_HEIGHT-MAP_PADDING)/height, (WINDOW_WIDTH-MAP_PADDING)/width});
+			return min({40, (WINDOW_HEIGHT-MAP_PADDING)/height, GAME_WIDTH/width});
 		}
 
-		pair<int, int> getBombPos(int x, int y) {
+		pair<int, int> getBombPos(int x, int y, bool clicked = false) {
 			int box_size = getBoxSize();
 			for(int i = 0; i < height; ++i) 
 			for(int j = 0; j < width; ++j) {
 				if (bombMap[i][j].isClicked(x, y)) {
-					cerr << "Clicked " << i << ' ' << j << '\n';
+					if (DEBUG_MOUSE && clicked) cerr << "Clicked " << i << ' ' << j << '\n';
 					return make_pair(i, j);
 				}
 			}
@@ -50,8 +51,9 @@ class Game {
 
 		tuple<int, int, int, int> getPosOfBox(int i, int j) {
 			int box_size = getBoxSize();			
-			int base_pos = WINDOW_HEIGHT/2 - box_size*height/2;
-			return make_tuple(base_pos + j*box_size, base_pos + i*box_size, base_pos + (j+1)*box_size, base_pos + (i+1)*box_size);
+			int base_height = WINDOW_HEIGHT/2 - box_size*height/2;
+			int base_width = (GAME_WIDTH - box_size*width + 2*MAP_PADDING)/2;
+			return make_tuple(base_width + j*box_size, base_height + i*box_size, base_width + (j+1)*box_size, base_height + (i+1)*box_size);
 		}
 
 		bool canGoOn(int x, int y) {
@@ -81,18 +83,6 @@ class Game {
 				if ((bombMap[i][j].hidden() || bombMap[i][j].isFlagged()) && !bombMap[i][j].hasBomb()) return;
 			}
 			status = WIN_GAME;
-		}
-
-		void updateGameTime() {
-			ofstream time_file(GameFile::TIME);
-			time_file << score_board.getPlayTime() << '\n';
-			time_file.close();
-		}
-
-		void removeBackupFile() {
-			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
-			game_file.clear();
-			time_file.clear();
 		}
 
 		int cntFlagged(int bombX, int bombY) {
@@ -128,7 +118,7 @@ class Game {
 			int x, y; 
 			int bombX, bombY; 
 			getmouseclick(WM_LBUTTONDOWN, x, y);
-			tie(bombX, bombY) = getBombPos(x, y);	// Get box position
+			tie(bombX, bombY) = getBombPos(x, y, true);	// Get box position
 
 			if (!validPos(bombX, bombY)) {
 				if (DEBUG_MOUSE) cerr << "Outside Box\n";
@@ -157,15 +147,32 @@ class Game {
 			}
 		}
 
+		int getPlayTime() {return clock()/1000 - start_time + backup_time;}
+		int getMin(int t) {return t/60;}
+		int getSec(int t) {return t%60;}
+
+		string getTimeString() {
+			char ans[30];
+			int play_time = getPlayTime();
+			sprintf(ans, "%02d:%02d", getMin(play_time), getSec(play_time));
+			return ans;
+		}
+
+		string getBombLeft() {
+			char ans[30];
+			sprintf(ans, "%02d", num_bomb - num_flag);
+			return ans;
+		}
+
 		bool checkRightMouseClick() {
 			int x, y; 
 			int bombX, bombY; 
 			getmouseclick(WM_RBUTTONDOWN, x, y);
-			tie(bombX, bombY) = getBombPos(x, y);
+			tie(bombX, bombY) = getBombPos(x, y, true);
 			if (validPos(bombX, bombY) && (bombMap[bombX][bombY].hidden() || bombMap[bombX][bombY].isFlagged())) {
 				num_flag += bombMap[bombX][bombY].toggleFlag(); 
-				score_board.setFlag(num_bomb - num_flag);
-				score_board.display(bombMap[0][0].getFontType(), bombMap[0][0].getFontSize());
+				flag_board.update(&getBombLeft()[0], BOLD_FONT, 2);
+				time_board.update(&getTimeString()[0], BOLD_FONT, 2);
 				return true;
 			} else cerr << "Outside Box\n";		
 			return false;
@@ -173,12 +180,26 @@ class Game {
 
 		void checkHover() {
 			int x = mousex(), y = mousey();
-			int bombX, bombY; tie(bombX, bombY) = getBombPos(x, y);
-			static int lastX, lastY;
-			if (validPos(lastX, lastY)) bombMap[lastX][lastY].draw();
-			if (validPos(bombX, bombY) && bombMap[bombX][bombY].checkHover()) {
-				lastX = bombX, lastY = bombY;
-			} else lastX = -1, lastY = -1;
+			int bombX, bombY; tie(bombX, bombY) = getBombPos(x, y, false);
+			static int lastX = -1, lastY = -1;
+			if (lastX != bombX || lastY != bombY) {
+				if (validPos(lastX, lastY)) bombMap[lastX][lastY].draw();
+				if (validPos(bombX, bombY) && bombMap[bombX][bombY].checkHover()) {
+					lastX = bombX, lastY = bombY;
+				} else lastX = -1, lastY = -1;
+			}
+		}
+
+		void updateGameTime() {
+			ofstream time_file(GameFile::TIME);
+			time_file << getPlayTime() << '\n';
+			time_file.close();
+		}
+
+		void removeBackupFile() {
+			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
+			game_file.clear();
+			time_file.clear();
 		}
 	
 	public:
@@ -194,12 +215,13 @@ class Game {
 		}
 
 		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
-			assert(num_bomb <= height*width && height <= 50 && width <= 50);
+			assert(num_bomb <= height*width && height <= 30 && width <= 30);
 			
 			initMap(height, width);
-
-			int top_box = get<1>(getPosOfBox(0, 0));
-			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb);
+			start_time = clock()/1000;
+			backup_time = 0;
+			time_board = ScoreBoard("TIME", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			flag_board = ScoreBoard("FLAGS", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
 		}
 
 		int getHeight() {return height;}
@@ -212,7 +234,7 @@ class Game {
 		bool foundValidBackupFile() {
 			/* Need to refactor this later */
 			ifstream game_file(GameFile::GAME), time_file(GameFile::TIME);
-			int backup_time;
+			start_time = clock()/1000;
 			if (!(time_file >> backup_time)) return false; 
 
 			if (!(game_file >> height >> width >> num_bomb)) return false;
@@ -225,8 +247,8 @@ class Game {
 				decode(code, bombMap[i][j]);
 				num_flag += bombMap[i][j].isFlagged();
 			}
-			int top_box = get<1>(getPosOfBox(0, 0));
-			score_board = ScoreBoard(WINDOW_WIDTH/2, top_box-score_board.getHeight()/2, clock()/1000, num_bomb-num_flag, backup_time);
+			time_board = ScoreBoard("TIME", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			flag_board = ScoreBoard("FLAGS", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
 			return true;
 		}
 
@@ -242,8 +264,21 @@ class Game {
 
 			calcAdjTable();
 		}
+
+		void drawScoreboardBar() {
+			setfillstyle(SOLID_FILL, MyColor::WINDOW_BG);
+			bar(GAME_WIDTH + 2*MAP_PADDING, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+			setcolor(MyColor::BORDER);
+			line(GAME_WIDTH + 2*MAP_PADDING, 0, GAME_WIDTH + 2*MAP_PADDING, WINDOW_HEIGHT);
+
+			time_board.display(&getTimeString()[0], BOLD_FONT, 2);
+			flag_board.display(&getBombLeft()[0], BOLD_FONT, 2);
+		}
 		
 		void display() {
+			drawScoreboardBar();
+
 			int box_size = getBoxSize();
 			for(int i = 0; i < height; ++i) 
 			for(int j = 0; j < width; ++j) {
@@ -262,7 +297,7 @@ class Game {
 
 		void saveGame() {
 			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
-			time_file << score_board.getPlayTime() << '\n';
+			time_file << getPlayTime() << '\n';
 			game_file << height << ' ' << width << ' ' << num_bomb << ' ' << '\n';
 			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) game_file << bombMap[i][j].encode() << " \n"[j == width-1]; 
 			time_file.close();
@@ -281,15 +316,18 @@ class Game {
 				} else checkHover();
 
 				++cntLoops;
-				if (cntLoops%20 == 0) updateGameTime();
-				if (cntLoops%5 == 0) score_board.display(bombMap[0][0].getFontType(), bombMap[0][0].getFontSize());
+				if (cntLoops%40 == 0) updateGameTime();
+				
+				// string time_display = getTimeString();
+				// cerr << time_display << '\n';
+				if (cntLoops%10 == 0) time_board.update(&getTimeString()[0], BOLD_FONT, 2);
 
 				if (has_update) {
 					saveGame();
 					break;
 				}
 
-				delay(50);
+				delay(25);
 			}
 
 			if (status == ON_GOING) checkWinGame();
