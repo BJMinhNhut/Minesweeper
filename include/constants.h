@@ -23,6 +23,13 @@ const int DEBUG_WIDTH = 10;
 const int DEBUG_HEIGHT = 10;
 const int DEBUG_BOMB = 12;
 
+const int MAX_SIZE = 30;
+const int MAX_BOMB = 99;
+const int MIN_SIZE = 0;
+const int MIN_BOMB = 0;
+const int DEFAULT_SIZE = 16;
+const int DEFAULT_BOMB = 40;
+
 namespace GameMode {
 	const int CUSTOM = 0;
 	const int EASY = 1;
@@ -60,6 +67,9 @@ namespace MyColor {
 	const int SIX = COLOR(191, 54, 12); 
 	const int SEVEN = COLOR(183, 28, 28);
 	const int EIGHT = COLOR(136, 14, 79);
+
+	const int ADJUST_BUTTON = COLOR(64, 193, 232);
+	const int WINDOW_TITLE = COLOR(29, 36, 50);
 } 
 
 namespace GameFile {

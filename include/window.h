@@ -10,6 +10,7 @@ namespace Window {
 	char *TITLE[2] = {"GAME OVER", "CONGRATULATIONS!"};
 
 	int endGameAnnouncement(bool win) {
+		clearmouseclick(WM_LBUTTONDOWN);
 		char *title;
 
 		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
@@ -28,18 +29,14 @@ namespace Window {
 		restart_butt.draw();
 
 		while (1) {
-			if (ismouseclick(WM_LBUTTONDOWN)) {
-				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-				if (menu_butt.isClicked(x, y)) return RETURN;
-				if (restart_butt.isClicked(x, y)) return RESTART;
-			} else {
-				menu_butt.checkHover();
-				restart_butt.checkHover();
-			}
+			if (menu_butt.checkHover() == Button::CLICKED) return RETURN;
+			if (restart_butt.checkHover() == Button::CLICKED) return RESTART;
+
 		}
 	}
 
 	int newGameWarning() {
+		clearmouseclick(WM_LBUTTONDOWN);
 		char *announce = "There is an old session not finished!";
 		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
 
@@ -65,16 +62,9 @@ namespace Window {
 		no.draw();
 
 		while (1) {
-			if (ismouseclick(WM_LBUTTONDOWN)) {
-				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-				if (yes.isClicked(x, y)) return CONTINUE;
-				if (no.isClicked(x, y)) return NEW;
-				if (return_butt.isClicked(x, y)) return RETURN;
-			} else {
-				yes.checkHover();
-				no.checkHover();
-				return_butt.checkHover();
-			}
+			if (yes.checkHover() == Button::CLICKED) return CONTINUE;
+			if (no.checkHover() == Button::CLICKED) return NEW;
+			if (return_butt.checkHover() == Button::CLICKED) return RETURN;
 		}
 	}
 }

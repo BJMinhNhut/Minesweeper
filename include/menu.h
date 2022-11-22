@@ -4,6 +4,7 @@
 #include "button.h"
 #include "constants.h"
 #include "window.h"
+#include "input.h"
 #include <bits/stdc++.h>
 
 class Menu {
@@ -47,26 +48,37 @@ class Menu {
 			clearMenu();
 			clearmouseclick(WM_LBUTTONDOWN);
 
-			Button return_butt(100, 30, WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "RETURN");
-			Button go_butt(100, 30, WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50, "GO");
+			InputBox height_box("Height", WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - 20, DEFAULT_SIZE, MIN_SIZE, MAX_SIZE);
+			InputBox width_box("Width", WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 50, DEFAULT_SIZE, MIN_SIZE, MAX_SIZE);
+			InputBox bomb_box("Bombs", WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 120, DEFAULT_BOMB, MIN_BOMB, MAX_BOMB);
+			Button go_butt(100, 30, WINDOW_WIDTH/2 + 60, WINDOW_HEIGHT/2 + 210, "GO");
+			Button return_butt(100, 30, WINDOW_WIDTH/2 - 60, WINDOW_HEIGHT/2 + 210, "RETURN");
+
+			drawFrame(MyColor::WINDOW_TITLE, MyColor::BORDER, 200, WINDOW_HEIGHT/2 - 110, 1000, WINDOW_HEIGHT/2 - 70);
+			setcolor(WHITE);
+			setbkcolor(MyColor::WINDOW_TITLE);
+			settextjustify(CENTER_TEXT, CENTER_TEXT);
+			outtextxy(600, WINDOW_HEIGHT/2-85, "CUSTOMIZE SETTINGS");
+
+			drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, 200, WINDOW_HEIGHT/2 - 70, 1000, WINDOW_HEIGHT/2 + 250);
+
+			height_box.display();
+			width_box.display();
+			bomb_box.display();
 			return_butt.draw();
 			go_butt.draw();
 
-			int height = 10, width = 10, bomb = 20;
 			while (1) {
-				if (ismouseclick(WM_LBUTTONDOWN)) {
-					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-					if (return_butt.isClicked(x, y)) return;
-					if (go_butt.isClicked(x, y)) {
-						Game newGame(height, width, bomb);
-						newGame.genRandomBombMap();
-						runGame(newGame);
-						return;
-					}
-				} else {
-					return_butt.checkHover();
-					go_butt.checkHover();
+				if (return_butt.checkHover() == Button::CLICKED) return;
+				if (go_butt.checkHover() == Button::CLICKED) {
+					Game newGame(height_box.getVal(), width_box.getVal(), bomb_box.getVal());
+					newGame.genRandomBombMap();
+					runGame(newGame);
+					return;
 				}
+				if (height_box.checkHover() == InputBox::UPDATED) continue;
+				if (width_box.checkHover() == InputBox::UPDATED) continue;
+				if (bomb_box.checkHover() == InputBox::UPDATED) continue;
 			}
 		}
 
@@ -85,15 +97,9 @@ class Menu {
 			}
 
 			while (1) {
-				while (!ismouseclick(WM_LBUTTONDOWN)) {
-					for(int mode_id = 0; mode_id < GameMode::NMODE; ++mode_id) {
-						mode_butt[mode_id].checkHover();
-					}
-				}
-				int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-				if (mode_butt[0].isClicked(x, y)) {customScreen(); return;}
+				if (mode_butt[0].checkHover() == Button::CLICKED) {customScreen(); return;}
 				for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
-					if (mode_butt[mode_id].isClicked(x, y)) {
+					if (mode_butt[mode_id].checkHover() == Button::CLICKED) {
 						genNewGame(mode_id);
 						clearmouseclick(WM_LBUTTONDOWN);
 						return;
@@ -119,26 +125,28 @@ class Menu {
 			Button exitGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "Exit");
 			exitGameButt.draw();
 
-			while (!ismouseclick(WM_LBUTTONDOWN)) {
-				newGameButt.checkHover(); 
-				exitGameButt.checkHover(); 
-			}
+			while (1) {
+				bool clicked_button = false;
 
-			int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-			if (newGameButt.isClicked(x, y)) {
-				Game old_game;
-				if (old_game.foundValidBackupFile()) {
-					clearMenu();
-					int choice = Window::newGameWarning();
-					
-					if (choice == Window::CONTINUE) runGame(old_game);
-					else if (choice == Window::RETURN) {display(); return;}
-					else optionScreen();
+				if (newGameButt.checkHover() == Button::CLICKED) {
+					clicked_button = true;
+					Game old_game;
+					if (old_game.foundValidBackupFile()) {
+						clearMenu();
+						int choice = Window::newGameWarning();
+						
+						if (choice == Window::CONTINUE) runGame(old_game);
+						else if (choice == Window::RETURN) {display(); return;}
+						else optionScreen();
 
-				} else optionScreen();
+					} else optionScreen();
 
-			} else if (exitGameButt.isClicked(x, y)) {
-				exit(EXIT_SUCCESS);
+				} else if (exitGameButt.checkHover() == Button::CLICKED) {
+					clicked_button = true;
+					exit(EXIT_SUCCESS);
+				}
+
+				if (clicked_button) break;
 			}
 		}
 };

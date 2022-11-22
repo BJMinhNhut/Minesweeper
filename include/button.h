@@ -12,6 +12,8 @@ class Button {
 		char *content;
 
 	public:
+		static const int CLICKED = 1;
+
 		Button(int width = 0, int height = 0, int l = 0, int t = 0, char *_content = ""): 
 			left(l), top(t), content(_content) {
 				right = left + width;
@@ -24,19 +26,23 @@ class Button {
 
 		int getHeight() {return bot-top;}
 
-		bool isClicked(int x, int y) {
+		bool contain(int x, int y) {
 			return x >= left && x <= right && y >= top && y <= bot;
 		}
 
-		void checkHover() {
-			if (!isClicked(mousex(), mousey())) return;
-			draw(MyColor::BUTTON_HOVER, MyColor::BUTTON);
-			while (!ismouseclick(WM_LBUTTONDOWN)) {
-				if (!isClicked(mousex(), mousey())) {
-					draw();
-					break;
+		bool checkHover(int color = MyColor::BUTTON_HOVER, int text_color = MyColor::BUTTON) {
+			if (!contain(mousex(), mousey())) return false;
+			draw(color, text_color);
+			
+			do {
+				if (ismouseclick(WM_LBUTTONDOWN)) {
+					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
+					return CLICKED;
 				}
-			}
+			} while (contain(mousex(), mousey()));
+
+			draw(text_color, color);
+			return false;
 		}
 
 		void draw(int color = MyColor::BUTTON, int text_color = MyColor::BUTTON_HOVER, bool has_border = true) {
@@ -55,7 +61,6 @@ class Button {
 			int width = textwidth(content);
 			int height = textheight(content);
 			outtextxy((left+right)>>1, (top+bot+height/2)>>1, content);
-			setbkcolor(BLACK);
 		}
 };
 
