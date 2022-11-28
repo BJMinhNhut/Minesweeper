@@ -33,11 +33,10 @@ class Button {
 		bool checkHover(int color = MyColor::BUTTON_HOVER, int text_color = MyColor::BUTTON) {
 			if (!contain(mousex(), mousey())) return false;
 			draw(color, text_color);
-			
 			do {
-				if (ismouseclick(WM_LBUTTONDOWN)) {
+				while (ismouseclick(WM_LBUTTONDOWN)) {
 					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-					return CLICKED;
+					if (contain(x, y)) return CLICKED;
 				}
 			} while (contain(mousex(), mousey()));
 
