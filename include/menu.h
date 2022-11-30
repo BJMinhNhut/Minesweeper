@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "window.h"
 #include "input.h"
+#include "ranking.h"
 #include <bits/stdc++.h>
 
 class Menu {
@@ -22,7 +23,7 @@ class Menu {
 			}
 
 			// game.display();
-
+			delay(1000);
 			int choice = Window::endGameAnnouncement(game.win());
 			if (choice == Window::RESTART) {
 				Game newGame(game.getHeight(), game.getWidth(), game.getNumBomb());
@@ -117,17 +118,22 @@ class Menu {
 			
 			//New Game Button
 			int curY = midy;
-			Button newGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "New game");
+			Button newGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "NEW GAME");
 			newGameButt.draw();
 
-			//Exit Game Button
+			//Ranking Button
 			curY += newGameButt.getHeight() + 10;
-			Button exitGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "Exit");
+			Button rankingButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "HALL OF FAME");
+			rankingButt.draw();
+
+			//Exit Game Button
+			curY += rankingButt.getHeight() + 10;
+			Button exitGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "EXIT");
 			exitGameButt.draw();
 
 			while (1) {
 				bool clicked_button = false;
-
+				
 				if (newGameButt.checkHover() == Button::CLICKED) {
 					clicked_button = true;
 					Game old_game;
@@ -141,6 +147,10 @@ class Menu {
 
 					} else optionScreen();
 
+				} else if (rankingButt.checkHover() == Button::CLICKED) {
+					clearMenu();
+					Ranking::displayRanking();
+					return;
 				} else if (exitGameButt.checkHover() == Button::CLICKED) {
 					clicked_button = true;
 					exit(EXIT_SUCCESS);

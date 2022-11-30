@@ -16,6 +16,7 @@ class Game {
 		int height, width, num_bomb, num_flag;
 		int start_time, backup_time;
 		int status;
+		pair<int, int> lastClick;
 		ScoreBoard time_board, flag_board;
 
 		int getBoxSize() {
@@ -102,8 +103,10 @@ class Game {
 			if (bombMap[bombX][bombY].hasBomb()) {
 				//EXPLODE
 				status = LOSE_GAME;
+				bombMap[bombX][bombY].explode();
 				for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) 
-					if (bombMap[i][j].hasBomb()) bombMap[i][j].revealBox();
+					if (bombMap[i][j].hasBomb() && !bombMap[i][j].isFlagged() && (i != bombX || j != bombY)) 
+						bombMap[i][j].revealBox();
 				return true;
 			} else if (bombMap[bombX][bombY].hidden()) {
 				//REVEAL BOX
@@ -173,6 +176,7 @@ class Game {
 				num_flag += bombMap[bombX][bombY].toggleFlag(); 
 				flag_board.update(&getBombLeft()[0], BOLD_FONT, 2);
 				time_board.update(&getTimeString()[0], BOLD_FONT, 2);
+				lastClick = make_pair(bombX, bombY);
 				return true;
 			} else cerr << "Outside Box\n";		
 			return false;
@@ -283,15 +287,6 @@ class Game {
 			for(int i = 0; i < height; ++i) 
 			for(int j = 0; j < width; ++j) {
 				bombMap[i][j].draw();
-			}
-
-			if (status == WIN_GAME) {
-				setcolor(GREEN);
-				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "WINNNNNN");
-			}
-			if (status == LOSE_GAME) {
-				setcolor(RED);
-				outtextxy(WINDOW_WIDTH/2, WINDOW_HEIGHT/2, "LOSEEEEE");
 			}
 		}
 

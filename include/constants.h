@@ -36,10 +36,17 @@ namespace GameMode {
 	const int NORMAL = 2;
 	const int HARD = 3;
 
-	const int NMODE = 4;
-	char *CAPTION[NMODE] = {"Custom", "Easy (9x9, 10 bombs)", "Normal (16x16, 40 bombs)", "Hard (30x16, 99 bombs)"};
+	const int NMODE = 5;
+	char *DESCRIP[NMODE] = {"", "(9x9, 10 bombs)", "(16x16, 40 bombs)", "(30x16, 99 bombs)", "(30x30, 199 bombs)"};
+	char *CAPTION[NMODE] = {"CUSTOM", "WEAK", "FIT", "STRONG", "SUPERHERO"};
 	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(9, 9, 10), 
-													std::make_tuple(16, 16, 40), std::make_tuple(16, 30, 99)};
+													std::make_tuple(16, 16, 40), std::make_tuple(16, 30, 99), std::make_tuple(30, 30, 199)};
+}
+
+namespace Image {
+	const char FLAG[] = "assets\\flag.bmp"; 
+	const char BOMB[] = "assets\\bomb.bmp"; 
+	const char BOMB_INACTIVE[] = "assets\\bomb_inactive.bmp"; 
 }
 
 namespace MyColor {
@@ -75,6 +82,7 @@ namespace MyColor {
 namespace GameFile {
 	const char TIME[] = "savefiles\\time.log";
 	const char GAME[] = "savefiles\\game.log";
+	const char RANK[] = "savefiles\\rank.log";
 }
 
 void drawFrame(int background, int color, int left, int top, int right, int bot) {

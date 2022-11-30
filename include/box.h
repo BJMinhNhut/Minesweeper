@@ -54,6 +54,13 @@ class Box {
 			rectangle(left, top, right, bot);
 		}
 
+		void drawImageBox(const char *image_link) {
+			readimagefile(image_link, left, top, right, bot);
+			setcolor(MyColor::BORDER);
+			rectangle(left, top, right, bot);
+		}
+
+
 	public:
 		Box(int l = 0, int t = 0, int r = 0, int b = 0, bool _has_bomb = 0): 
 			left(l), top(t), right(r), bot(b), has_bomb(_has_bomb), adj_bomb_num(0), display_status(0) {}
@@ -101,13 +108,17 @@ class Box {
 				printNum((cnt++)%8+1);
 			#else
 				if (hidden()) drawBox(MyColor::HIDDEN);
-				else if (isFlagged()) drawBox(MyColor::FLAG), printChar(MyColor::FLAG, WHITE, "F");
-				else if (hasBomb()) drawBox(MyColor::BOMB_BG), printChar(MyColor::BOMB_BG, BLACK, "O");
+				else if (isFlagged()) drawImageBox(Image::FLAG);
+				else if (hasBomb()) drawImageBox(Image::BOMB_INACTIVE);
 				else {
 					drawBox(MyColor::REVEAL);
 					if (getAdjBomb()) printNum(adj_bomb_num);
 				}
 			#endif
+		}
+
+		void explode() {
+			drawImageBox(Image::BOMB);
 		}
 
 		int toggleFlag() {
