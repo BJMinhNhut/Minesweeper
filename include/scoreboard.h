@@ -12,7 +12,7 @@ class ScoreBoard {
 		char *title; //startTime: depend on the time player start game (not program)
 
 		void init_text(int font, int font_size) {
-			settextstyle(font, HORIZ_DIR, font_size);
+			SetTextStyle(font, HORIZ_DIR, font_size);
 			settextjustify(CENTER_TEXT, BOTTOM_TEXT);
 			setbkcolor(MyColor::GAME_BG);
 			setcolor(MyColor::TEXT);

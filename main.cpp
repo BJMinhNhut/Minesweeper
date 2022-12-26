@@ -8,7 +8,7 @@ void printTitle() {
 	int midy = WINDOW_HEIGHT/2;
 
 	settextjustify(CENTER_TEXT, CENTER_TEXT);
-	settextstyle(BOLD_FONT, HORIZ_DIR, 6);
+	SetTextStyle(BOLD_FONT, HORIZ_DIR, 6);
 	setcolor(MyColor::TEXT);
 	setbkcolor(MyColor::GAME_BG);
    	outtextxy(midx, midy/2, "MINESWEEPER");

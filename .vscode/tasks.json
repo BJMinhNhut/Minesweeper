@@ -19,6 +19,8 @@
                 "-static-libgcc",
                 "-static-libstdc++",
                 "-static",
+                "-O2",
+                "-lwinmm",
             ],
             "options": {
                 "cwd": "${fileDirname}"

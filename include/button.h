@@ -1,21 +1,24 @@
 #ifndef _BUTTON_H_
 #define _BUTTON_H_
 
-#include <graphics.h>
 #include "constants.h"
+#include <graphics.h>
 #include <bits/stdc++.h>
+#include <windows.h>
+#include <mmsystem.h>
+
 using namespace std;
 
 class Button {
 	private:
 		int left, top, right, bot;
-		char *content;
+		string content;
 
 	public:
 		static const int CLICKED = 1;
 
-		Button(int width = 0, int height = 0, int l = 0, int t = 0, char *_content = ""): 
-			left(l), top(t), content(_content) {
+		Button(int width = 0, int height = 0, int x = 0, int y = 0, string _content = ""): 
+			left(x), top(y), content(_content) {
 				right = left + width;
 				bot = top + height;
 
@@ -36,7 +39,10 @@ class Button {
 			do {
 				while (ismouseclick(WM_LBUTTONDOWN)) {
 					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
-					if (contain(x, y)) return CLICKED;
+					if (contain(x, y)) {
+						bool played = PlaySound(TEXT("assets\\click.wav"), NULL, SND_SYNC);
+						return CLICKED;
+					}
 				}
 			} while (contain(mousex(), mousey()));
 
@@ -44,6 +50,16 @@ class Button {
 			return false;
 		}
 
+		void updateContent(int color = MyColor::BUTTON, int text_color = MyColor::BUTTON_HOVER) {
+			setbkcolor(color);
+			setcolor(text_color);
+			SetTextStyle(BOLD_FONT, HORIZ_DIR, 2);
+			settextjustify(CENTER_TEXT, CENTER_TEXT);
+			int width = textwidth(&content[0]);
+			int height = textheight(&content[0]);
+			outtextxy((left+right)>>1, (top+bot+height/2)>>1, &content[0]);			
+		}
+		
 		void draw(int color = MyColor::BUTTON, int text_color = MyColor::BUTTON_HOVER, bool has_border = true) {
 			setfillstyle(SOLID_FILL, color);
 			bar(left, top, right, bot);
@@ -53,13 +69,11 @@ class Button {
 				rectangle(left, top, right, bot);
 			}
 
-			setbkcolor(color);
-			setcolor(text_color);
-			settextstyle(BOLD_FONT, HORIZ_DIR, 2);
-			settextjustify(CENTER_TEXT, CENTER_TEXT);
-			int width = textwidth(content);
-			int height = textheight(content);
-			outtextxy((left+right)>>1, (top+bot+height/2)>>1, content);
+			updateContent(color, text_color);
+		}
+
+		void setContent(string new_content) {
+			content = new_content;
 		}
 };
 

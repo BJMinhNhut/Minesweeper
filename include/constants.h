@@ -1,11 +1,13 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
-#define DEBUG_MOUSE 1
+
 #include <bits/stdc++.h>
+
+#define DEBUG_MOUSE 0
 // #define _DEBUG_BOX_COLOR_
 
-const int WINDOW_HEIGHT = 750;
+const int WINDOW_HEIGHT = 800;
 const int WINDOW_WIDTH = 1200;
 const char WINDOW_TITLE[] = "Minesweeper";	
 const int MAP_PADDING = 30;
@@ -24,7 +26,7 @@ const int DEBUG_HEIGHT = 10;
 const int DEBUG_BOMB = 12;
 
 const int MAX_SIZE = 30;
-const int MAX_BOMB = 99;
+const int MAX_BOMB = 499;
 const int MIN_SIZE = 0;
 const int MIN_BOMB = 0;
 const int DEFAULT_SIZE = 16;
@@ -37,14 +39,18 @@ namespace GameMode {
 	const int HARD = 3;
 
 	const int NMODE = 5;
-	char *DESCRIP[NMODE] = {"", "(9x9, 10 bombs)", "(16x16, 40 bombs)", "(30x16, 99 bombs)", "(30x30, 199 bombs)"};
-	char *CAPTION[NMODE] = {"CUSTOM", "WEAK", "FIT", "STRONG", "SUPERHERO"};
-	const std::tuple<int, int, int> PROPERTIES[NMODE] = {std::make_tuple(-1, -1, -1), std::make_tuple(9, 9, 10), 
-													std::make_tuple(16, 16, 40), std::make_tuple(16, 30, 99), std::make_tuple(30, 30, 199)};
+	std::string DESCRIP[NMODE] = {" (9x9, 10 bombs)", " (16x16, 40 bombs)", " (30x16, 99 bombs)", " (30x30, 199 bombs)", ""};
+	std::string CAPTION[NMODE] = {"WEAK", "FIT", "STRONG", "SUPERHERO", "CUSTOM"};
+	const std::tuple<int, int, int> PROPERTIES[NMODE] = {
+		std::make_tuple(9, 9, 10), std::make_tuple(16, 16, 40), 
+		std::make_tuple(16, 30, 99), std::make_tuple(30, 30, 199), std::make_tuple(-1, -1, -1)
+	};
 }
 
 namespace Image {
 	const char FLAG[] = "assets\\flag.bmp"; 
+	const char FLAG_CORRECT[] = "assets\\flag_correct.bmp"; 
+	const char FLAG_INCORRECT[] = "assets\\flag_incorrect.bmp";
 	const char BOMB[] = "assets\\bomb.bmp"; 
 	const char BOMB_INACTIVE[] = "assets\\bomb_inactive.bmp"; 
 }
@@ -91,6 +97,19 @@ void drawFrame(int background, int color, int left, int top, int right, int bot)
 	setfillstyle(SOLID_FILL, background);
 	bar(left, top, right, bot);
 	rectangle(left, top, right, bot);
+}
+
+void SetTextStyle(int font, int dir, int font_size) {
+	textsettingstype cur;
+	gettextsettings(&cur);
+	if (cur.font != font || cur.charsize != font_size) {
+		settextstyle(font, dir, font_size);
+	}
+}
+
+void Delay(int sec) {
+	int last = clock();
+	while (clock()-last < sec) {}
 }
 
 #endif

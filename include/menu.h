@@ -9,35 +9,13 @@
 #include <bits/stdc++.h>
 
 class Menu {
-		void runGame(Game &game) {
-			setbkcolor(MyColor::GAME_BG);
-			cleardevice();
-			clearmouseclick(WM_LBUTTONDOWN);
-			clearmouseclick(WM_RBUTTONDOWN);
-			
-			int cnt = 0;
-			game.display();
-			game.saveGame();
-			while (game.onGoing()) {
-				game.checkClickAndUpdate();
-			}
-
-			// game.display();
-			delay(1000);
-			int choice = Window::endGameAnnouncement(game.win());
-			if (choice == Window::RESTART) {
-				Game newGame(game.getHeight(), game.getWidth(), game.getNumBomb());
-				newGame.genRandomBombMap();
-				runGame(newGame);
-			}
-		}
 
 		void genNewGame(int game_mode) {
 			int height, width, bomb; tie(height, width, bomb) = GameMode::PROPERTIES[game_mode]; 
 			Game newGame(height, width, bomb);
 			newGame.genRandomBombMap();
 
-			runGame(newGame);
+			newGame.run();
 		}
 
 		void clearMenu() {
@@ -74,7 +52,7 @@ class Menu {
 				if (go_butt.checkHover() == Button::CLICKED) {
 					Game newGame(height_box.getVal(), width_box.getVal(), bomb_box.getVal());
 					newGame.genRandomBombMap();
-					runGame(newGame);
+					newGame.run();
 					return;
 				}
 				if (height_box.checkHover() == InputBox::UPDATED) continue;
@@ -92,14 +70,15 @@ class Menu {
 			int curY = midy;
 			vector<Button> mode_butt(GameMode::NMODE);
 			for(int mode_id = 0; mode_id < GameMode::NMODE; ++mode_id) {
-				mode_butt[mode_id] = Button(OPTION_WIDTH, OPTION_HEIGHT, midx, curY, GameMode::CAPTION[mode_id]);
+				string caption = GameMode::CAPTION[mode_id] + GameMode::DESCRIP[mode_id];
+				mode_butt[mode_id] = Button(OPTION_WIDTH, OPTION_HEIGHT, midx, curY, caption);
 				mode_butt[mode_id].draw();
 				curY += mode_butt[mode_id].getHeight() + 10;
 			}
 
 			while (1) {
-				if (mode_butt[0].checkHover() == Button::CLICKED) {customScreen(); return;}
-				for(int mode_id = 1; mode_id < GameMode::NMODE; ++mode_id) {
+				if (mode_butt[GameMode::NMODE-1].checkHover() == Button::CLICKED) {customScreen(); return;}
+				for(int mode_id = 0; mode_id < GameMode::NMODE-1; ++mode_id) {
 					if (mode_butt[mode_id].checkHover() == Button::CLICKED) {
 						genNewGame(mode_id);
 						clearmouseclick(WM_LBUTTONDOWN);
@@ -118,7 +97,7 @@ class Menu {
 			
 			//New Game Button
 			int curY = midy;
-			Button newGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "NEW GAME");
+			Button newGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "PLAY");
 			newGameButt.draw();
 
 			//Ranking Button
@@ -141,7 +120,7 @@ class Menu {
 						clearMenu();
 						int choice = Window::newGameWarning();
 						
-						if (choice == Window::CONTINUE) runGame(old_game);
+						if (choice == Window::CONTINUE) old_game.run();
 						else if (choice == Window::RETURN) {display(); return;}
 						else optionScreen();
 

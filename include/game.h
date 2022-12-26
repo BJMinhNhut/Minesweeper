@@ -6,6 +6,8 @@
 #include "box.h"
 #include "scoreboard.h"
 #include "constants.h"
+#include "button.h"
+#include "window.h"
 using namespace std;
 
 class Game {
@@ -18,6 +20,7 @@ class Game {
 		int status;
 		pair<int, int> lastClick;
 		ScoreBoard time_board, flag_board;
+		Button restart_butt, menu_butt;
 
 		int getBoxSize() {
 			return min({40, (WINDOW_HEIGHT-MAP_PADDING)/height, GAME_WIDTH/width});
@@ -25,13 +28,15 @@ class Game {
 
 		pair<int, int> getBombPos(int x, int y, bool clicked = false) {
 			int box_size = getBoxSize();
-			for(int i = 0; i < height; ++i) 
-			for(int j = 0; j < width; ++j) {
-				if (bombMap[i][j].isClicked(x, y)) {
-					if (DEBUG_MOUSE && clicked) cerr << "Clicked " << i << ' ' << j << '\n';
-					return make_pair(i, j);
-				}
+			pair<int, int> ans = make_pair(-1, -1);
+			for(int step = height/2; step > 0; step >>= 1) {
+				while (ans.first+step < height && bombMap[ans.first+step][0].getTop() <= y) ans.first += step;
 			}
+			for(int step = width/2; step > 0; step >>= 1) {
+				while (ans.second+step < width && bombMap[0][ans.second+step].getLeft() <= x) ans.second += step;
+			}
+			if (DEBUG_MOUSE && clicked) cerr << "Clicked " << ans.first << ' ' << ans.second << '\n';
+			return ans;
 		}
 
 		bool validPos(int x, int y) {
@@ -99,14 +104,48 @@ class Game {
 			return cntFlagged(bombX, bombY) == bombMap[bombX][bombY].getAdjBomb();
 		}
 
+		int getDelayTime(int cnt) {
+			if (cnt < 10) return 70;
+			if (cnt < 20) return 20;
+			if (cnt < 40) return 10;
+			if (cnt < 60) return 5;
+			return 0;
+		}
+
+		void loseGameBFS(int bombX, int bombY) {
+			vector<vector<bool>> visited(height, vector<bool>(width, 0));
+			queue<pair<int, int>> q;
+			q.push(make_pair(bombX, bombY));
+
+			int cnt = 0;
+
+			while (q.size()) {
+				int x,y; tie(x, y) = q.front(); q.pop();
+
+				if (bombMap[x][y].isFlagged()) {
+					if (bombMap[x][y].hasBomb()) bombMap[x][y].drawCorrectFlag();
+					else bombMap[x][y].drawIncorrectFlag();
+				} else if (bombMap[x][y].hasBomb() && (x != bombX || y != bombY)) 
+						bombMap[x][y].revealBox();
+
+				if (bombMap[x][y].hasBomb()) Delay(getDelayTime(++cnt));
+
+				for(int dir = 0; dir < 8; ++dir) {
+					int nxt_x = x + NEXTX[dir], nxt_y = y + NEXTY[dir];
+					if (!validPos(nxt_x, nxt_y) || visited[nxt_x][nxt_y]) continue;
+					q.push(make_pair(nxt_x, nxt_y));
+					visited[nxt_x][nxt_y] = true;
+				}
+			}
+			vector<vector<bool>>().swap(visited);
+		}
+
 		bool openBox(int bombX, int bombY) {
 			if (bombMap[bombX][bombY].hasBomb()) {
 				//EXPLODE
 				status = LOSE_GAME;
 				bombMap[bombX][bombY].explode();
-				for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) 
-					if (bombMap[i][j].hasBomb() && !bombMap[i][j].isFlagged() && (i != bombX || j != bombY)) 
-						bombMap[i][j].revealBox();
+				loseGameBFS(bombX, bombY);
 				return true;
 			} else if (bombMap[bombX][bombY].hidden()) {
 				//REVEAL BOX
@@ -218,14 +257,19 @@ class Game {
 			}
 		}
 
-		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
-			assert(num_bomb <= height*width && height <= 30 && width <= 30);
-			
-			initMap(height, width);
+		void initVar() {
 			start_time = clock()/1000;
-			backup_time = 0;
 			time_board = ScoreBoard("TIME", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
 			flag_board = ScoreBoard("FLAGS", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			restart_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-100, "RESTART");
+			menu_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-60, "MENU");
+		}
+
+		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
+			assert(num_bomb <= height*width && height <= 30 && width <= 30);
+			backup_time = 0;
+			initMap(height, width);
+			initVar();
 		}
 
 		int getHeight() {return height;}
@@ -251,8 +295,7 @@ class Game {
 				decode(code, bombMap[i][j]);
 				num_flag += bombMap[i][j].isFlagged();
 			}
-			time_board = ScoreBoard("TIME", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
-			flag_board = ScoreBoard("FLAGS", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			initVar();
 			return true;
 		}
 
@@ -282,6 +325,8 @@ class Game {
 		
 		void display() {
 			drawScoreboardBar();
+			restart_butt.draw();
+			menu_butt.draw();
 
 			int box_size = getBoxSize();
 			for(int i = 0; i < height; ++i) 
@@ -298,12 +343,14 @@ class Game {
 			time_file.close();
 			game_file.close();
 		}
-
-		void checkClickAndUpdate() {
+		
+		static const int RESTART = 1, MENU = 2;
+		int checkClickAndUpdate() {
 			int cntLoops = 0;
 			while (1) {
 				bool has_update = false;
-
+				if (restart_butt.checkHover() == Button::CLICKED) return RESTART;
+				if (menu_butt.checkHover() == Button::CLICKED) return MENU;
 				if (ismouseclick(WM_LBUTTONDOWN)) {
 					has_update |= checkLeftMouseClick(); 
 				} else if (ismouseclick(WM_RBUTTONDOWN)) {
@@ -331,9 +378,43 @@ class Game {
 
 			if (status == WIN_GAME) {
 				for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {
-					if (bombMap[i][j].hasBomb() && bombMap[i][j].hidden()) bombMap[i][j].toggleFlag();
-					else if (bombMap[i][j].hidden()) bombMap[i][j].revealBox();
+					if (bombMap[i][j].hasBomb()) bombMap[i][j].drawCorrectFlag();
 				}
+			}
+
+			return 0;
+		}
+
+		void run() {
+			setbkcolor(MyColor::GAME_BG);
+			cleardevice();
+			clearmouseclick(WM_LBUTTONDOWN);
+			clearmouseclick(WM_RBUTTONDOWN);
+			
+			int cnt = 0;
+			display();
+			saveGame();
+			int choice = -1;
+			while (onGoing()) {
+				int state = checkClickAndUpdate();
+
+				if (state == RESTART) {
+					choice = Window::RESTART;
+					break;
+				}
+				if (state == MENU) return;
+			}
+
+			// game.display();
+			if (choice == -1) {
+				delay(1000);
+				choice = Window::endGameAnnouncement(win());
+			}
+			
+			if (choice == Window::RESTART) {
+				Game newGame(height, width, num_bomb);
+				newGame.genRandomBombMap();
+				newGame.run();
 			}
 		}
 };

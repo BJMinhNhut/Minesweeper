@@ -23,7 +23,8 @@
                 "-lole32",
                 "-static-libgcc",
                 "-static-libstdc++",
-                "-static"
+                "-static",
+                "-O2"
             ]
         }
     ],

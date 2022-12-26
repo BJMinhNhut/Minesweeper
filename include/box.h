@@ -28,7 +28,7 @@ class Box {
 			sprintf(display_num, "%d", num);
 			setbkcolor(MyColor::REVEAL);
 			setcolor(getColorOnScale(num));
-			settextstyle(getFontType(), HORIZ_DIR, getFontSize());
+			SetTextStyle(getFontType(), HORIZ_DIR, getFontSize());
 			settextjustify(CENTER_TEXT, CENTER_TEXT);
 
 			int height = textheight(display_num);
@@ -39,7 +39,7 @@ class Box {
 		void printChar(int bg_color, int color, char *display_obj) {
 			setbkcolor(bg_color);
 			setcolor(color);
-			settextstyle(getFontType(), HORIZ_DIR, getFontSize());
+			SetTextStyle(getFontType(), HORIZ_DIR, getFontSize());
 			settextjustify(CENTER_TEXT, CENTER_TEXT);
 
 			int height = textheight(display_obj);
@@ -66,6 +66,9 @@ class Box {
 			left(l), top(t), right(r), bot(b), has_bomb(_has_bomb), adj_bomb_num(0), display_status(0) {}
 
 		void setPos(int l, int t, int r, int b) {left = l, right = r, top = t, bot = b;}
+
+		int getTop() {return top;}
+		int getLeft() {return left;}
 
 		bool hidden() {return display_status == HIDDEN;}
 		bool isFlagged() {return display_status == FLAGGED;}
@@ -119,6 +122,14 @@ class Box {
 
 		void explode() {
 			drawImageBox(Image::BOMB);
+		}
+
+		void drawCorrectFlag() {
+			drawImageBox(Image::FLAG_CORRECT);
+		}
+
+		void drawIncorrectFlag() {
+			drawImageBox(Image::FLAG_INCORRECT);
 		}
 
 		int toggleFlag() {

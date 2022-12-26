@@ -15,7 +15,7 @@ namespace Window {
 
 		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
 
-		settextstyle(BOLD_FONT, HORIZ_DIR, 5);
+		SetTextStyle(BOLD_FONT, HORIZ_DIR, 5);
 
 		Button menu_butt(100, 30, midx - 70, midy + textheight(TITLE[win]), "MENU");
 		Button restart_butt(100, 30, midx + 70, midy + textheight(TITLE[win]), "RESTART");
