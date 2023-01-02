@@ -40,7 +40,7 @@ class Button {
 				while (ismouseclick(WM_LBUTTONDOWN)) {
 					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 					if (contain(x, y)) {
-						bool played = PlaySound(TEXT("assets\\click.wav"), NULL, SND_SYNC);
+						bool played = PlaySound(TEXT("assets\\click.wav"), NULL, SND_FILENAME|SND_ASYNC);
 						return CLICKED;
 					}
 				}

@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "button.h"
 #include "window.h"
+#include "ranking.h"
 using namespace std;
 
 class Game {
@@ -21,6 +22,7 @@ class Game {
 		pair<int, int> lastClick;
 		ScoreBoard time_board, flag_board;
 		Button restart_butt, menu_butt;
+		int game_mode;
 
 		int getBoxSize() {
 			return min({40, (WINDOW_HEIGHT-MAP_PADDING)/height, GAME_WIDTH/width});
@@ -265,7 +267,7 @@ class Game {
 			menu_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-60, "MENU");
 		}
 
-		Game(int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
+		Game(int game_mode = -1, int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
 			assert(num_bomb <= height*width && height <= 30 && width <= 30);
 			backup_time = 0;
 			initMap(height, width);
@@ -295,6 +297,7 @@ class Game {
 				decode(code, bombMap[i][j]);
 				num_flag += bombMap[i][j].isFlagged();
 			}
+			game_file.close(), time_file.close();
 			initVar();
 			return true;
 		}
@@ -360,8 +363,6 @@ class Game {
 				++cntLoops;
 				if (cntLoops%40 == 0) updateGameTime();
 				
-				// string time_display = getTimeString();
-				// cerr << time_display << '\n';
 				if (cntLoops%10 == 0) time_board.update(&getTimeString()[0], BOLD_FONT, 2);
 
 				if (has_update) {
@@ -405,14 +406,15 @@ class Game {
 				if (state == MENU) return;
 			}
 
-			// game.display();
+			if (win() && game_mode != GameMode::NMODE-1) Ranking::insertScore(game_mode, getPlayTime());
+
 			if (choice == -1) {
 				delay(1000);
 				choice = Window::endGameAnnouncement(win());
 			}
 			
 			if (choice == Window::RESTART) {
-				Game newGame(height, width, num_bomb);
+				Game newGame(game_mode, height, width, num_bomb);
 				newGame.genRandomBombMap();
 				newGame.run();
 			}

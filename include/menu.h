@@ -6,15 +6,15 @@
 #include "window.h"
 #include "input.h"
 #include "ranking.h"
+#include "game.h"
 #include <bits/stdc++.h>
 
 class Menu {
 
 		void genNewGame(int game_mode) {
 			int height, width, bomb; tie(height, width, bomb) = GameMode::PROPERTIES[game_mode]; 
-			Game newGame(height, width, bomb);
+			Game newGame(game_mode, height, width, bomb);
 			newGame.genRandomBombMap();
-
 			newGame.run();
 		}
 
@@ -50,7 +50,7 @@ class Menu {
 			while (1) {
 				if (return_butt.checkHover() == Button::CLICKED) return;
 				if (go_butt.checkHover() == Button::CLICKED) {
-					Game newGame(height_box.getVal(), width_box.getVal(), bomb_box.getVal());
+					Game newGame(GameMode::NMODE-1, height_box.getVal(), width_box.getVal(), bomb_box.getVal());
 					newGame.genRandomBombMap();
 					newGame.run();
 					return;
@@ -127,7 +127,6 @@ class Menu {
 					} else optionScreen();
 
 				} else if (rankingButt.checkHover() == Button::CLICKED) {
-					clearMenu();
 					Ranking::displayRanking();
 					return;
 				} else if (exitGameButt.checkHover() == Button::CLICKED) {

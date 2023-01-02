@@ -32,7 +32,9 @@ int main()
 {
 	initwindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 	mkdir("savefiles");
+	Ranking::loadRanking();
 	printStartMenu();
+	Ranking::saveRanking();
    	closegraph();
    	return 0;
 }
