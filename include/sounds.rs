@@ -1,4 +1,4 @@
-#include "include/resource.h"
+#include "resource.h"
 
 CLICK WAVE "assets\\click.wav"
 MENU_BGM WAVE "assets\\menu_bgm.wav"
