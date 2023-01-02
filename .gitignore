@@ -30,12 +30,8 @@
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
 
-# Audio
-*.wav
-
-# Resource
-*.res
+# Save folder
+savefiles/
