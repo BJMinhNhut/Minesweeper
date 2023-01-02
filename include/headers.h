@@ -4,8 +4,10 @@
 #include "game.h"
 #include "menu.h"
 #include "constants.h"
+#include "resource.h"
 #include <bits/stdc++.h>
 #include <graphics.h>
 #include <unistd.h>
+#pragma comment (lib, "winmm.lib")
 
 #endif

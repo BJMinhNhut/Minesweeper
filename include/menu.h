@@ -12,8 +12,8 @@
 class Menu {
 
 		void genNewGame(int game_mode) {
-			int height, width, bomb; tie(height, width, bomb) = GameMode::PROPERTIES[game_mode]; 
-			Game newGame(game_mode, height, width, bomb);
+			int height, width, num_bomb; tie(height, width, num_bomb) = GameMode::PROPERTIES[game_mode]; 
+			Game newGame(game_mode, height, width, num_bomb);
 			newGame.genRandomBombMap();
 			newGame.run();
 		}
@@ -55,9 +55,18 @@ class Menu {
 					newGame.run();
 					return;
 				}
-				if (height_box.checkHover() == InputBox::UPDATED) continue;
-				if (width_box.checkHover() == InputBox::UPDATED) continue;
-				if (bomb_box.checkHover() == InputBox::UPDATED) continue;
+				if (height_box.checkHover() == InputBox::UPDATED) {
+					bomb_box.updateMax(height_box.getVal() * width_box.getVal()/2);
+					continue;
+				}
+				if (width_box.checkHover() == InputBox::UPDATED) {
+					bomb_box.updateMax(height_box.getVal() * width_box.getVal()/2);
+					continue;
+				}
+				if (bomb_box.checkHover() == InputBox::UPDATED) {
+					bomb_box.updateMax(height_box.getVal() * width_box.getVal()/2);
+					continue;
+				}
 			}
 		}
 

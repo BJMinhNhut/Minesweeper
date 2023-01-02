@@ -3,6 +3,7 @@
 
 
 #include <bits/stdc++.h>
+#include <graphics.h>
 
 #define DEBUG_MOUSE 0
 // #define _DEBUG_BOX_COLOR_
@@ -27,7 +28,7 @@ const int DEBUG_BOMB = 12;
 
 const int MAX_SIZE = 30;
 const int MAX_BOMB = 499;
-const int MIN_SIZE = 0;
+const int MIN_SIZE = 1;
 const int MIN_BOMB = 0;
 const int DEFAULT_SIZE = 16;
 const int DEFAULT_BOMB = 40;

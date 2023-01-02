@@ -1,0 +1,1 @@
+#define click 10

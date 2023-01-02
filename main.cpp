@@ -35,6 +35,7 @@ int main()
 	Ranking::loadRanking();
 	printStartMenu();
 	Ranking::saveRanking();
+	while (1){}
    	closegraph();
    	return 0;
 }

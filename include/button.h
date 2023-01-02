@@ -2,6 +2,7 @@
 #define _BUTTON_H_
 
 #include "constants.h"
+#include "resource.h"
 #include <graphics.h>
 #include <bits/stdc++.h>
 #include <windows.h>
@@ -33,14 +34,14 @@ class Button {
 			return x >= left && x <= right && y >= top && y <= bot;
 		}
 
-		bool checkHover(int color = MyColor::BUTTON_HOVER, int text_color = MyColor::BUTTON) {
+		bool checkHover(int color = MyColor::BUTTON_HOVER, int text_color = MyColor::BUTTON, bool play_sound = true) {
 			if (!contain(mousex(), mousey())) return false;
 			draw(color, text_color);
 			do {
 				while (ismouseclick(WM_LBUTTONDOWN)) {
 					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 					if (contain(x, y)) {
-						bool played = PlaySound(TEXT("assets\\click.wav"), NULL, SND_FILENAME|SND_ASYNC);
+						if (play_sound) PlaySound(MAKEINTRESOURCE(click), NULL, SND_RESOURCE|SND_ASYNC);
 						return CLICKED;
 					}
 				}

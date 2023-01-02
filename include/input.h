@@ -52,7 +52,7 @@ class InputBox {
 
 	bool checkButton(Button &butt, int delta) {
 		bool updated = false;
-		while (butt.checkHover(MyColor::ADJUST_BUTTON, MyColor::GAME_BG) == Button::CLICKED) {
+		while (butt.checkHover(MyColor::ADJUST_BUTTON, MyColor::GAME_BG, 0) == Button::CLICKED) {
 			updated = true;
 			val = max(min_val, min(val+delta, max_val));
 
@@ -99,6 +99,13 @@ public:
 		updated |= checkButton(inc_5, 5);
 		updated |= checkButton(dec_5, -5);
 		return updated;
+	}
+
+	void updateMax(int max_val) {
+		this->max_val = max_val;
+		val = min(val, max_val);
+		main_box.setContent(getStringVal());
+		main_box.updateContent(MyColor::WINDOW_BG, WHITE);
 	}
 
 	int getVal() {
