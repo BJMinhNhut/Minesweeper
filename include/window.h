@@ -67,6 +67,35 @@ namespace Window {
 			if (return_butt.checkHover() == Button::CLICKED) return RETURN;
 		}
 	}
+
+	int resetRankWarning() {
+		clearmouseclick(WM_LBUTTONDOWN);
+		char *announce = "The playing history will be cleared.";
+		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
+
+		char *question = "Are you sure you want to proceed?";
+
+		int pos_y = midy + textheight(announce) + textheight(question) + 20;
+		Button yes(60, 30, midx - 50, pos_y, "YES");
+
+		Button no(60, 30, midx + 50, pos_y, "NO");
+
+		int width = 500, height = 500;
+		pos_y += no.getHeight() + 10;
+		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-width/2, midy-textheight(announce) - 10, midx+width/2, pos_y);
+		//PRINT CONTENT
+		setbkcolor(MyColor::WINDOW_BG);
+		setcolor(MyColor::WINDOW_TEXT);
+		outtextxy(midx, midy, announce);
+		outtextxy(midx, midy + textheight(announce), question);
+		yes.draw();
+		no.draw();
+
+		while (1) {
+			if (yes.checkHover() == Button::CLICKED) return CONTINUE;
+			if (no.checkHover() == Button::CLICKED) return RETURN;
+		}
+	}
 }
 
 #endif 

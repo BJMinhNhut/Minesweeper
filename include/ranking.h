@@ -3,6 +3,7 @@
 
 #include "constants.h"
 #include "button.h"
+#include "window.h"
 #include <graphics.h>
 #include <algorithm>
 
@@ -53,7 +54,8 @@ namespace Ranking {
 		clearmouseclick(WM_LBUTTONDOWN);
 		setbkcolor(MyColor::GAME_BG);
 		cleardevice();
-		Button returnButt(100, 30, WINDOW_WIDTH/2, WINDOW_HEIGHT - 50, "RETURN");
+		Button returnButt(100, 30, WINDOW_WIDTH/2-70, WINDOW_HEIGHT - 50, "RETURN");
+		Button resetButt(100, 30, WINDOW_WIDTH/2+70, WINDOW_HEIGHT - 50, "RESET");
 		
 		// ranking table
 		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, WINDOW_WIDTH/2-400, WINDOW_HEIGHT/2-200, WINDOW_WIDTH/2+400, WINDOW_HEIGHT/2-150);
@@ -72,9 +74,19 @@ namespace Ranking {
 			}
 		}
 		returnButt.draw();
+		resetButt.draw();
 
 		while (1) {
 			if (returnButt.checkHover() == Button::CLICKED) return;
+			if (resetButt.checkHover() == Button::CLICKED) {
+				if (Window::resetRankWarning() == Window::CONTINUE) {
+					for(int i = 0; i < GameMode::NMODE-1; ++i) data[i].assign(NRANK, INF);
+					saveRanking();
+				}
+				
+				displayRanking();
+				return;
+			}
 		}
 	}
 
