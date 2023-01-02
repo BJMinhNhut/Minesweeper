@@ -145,6 +145,7 @@ class Game {
 		bool openBox(int bombX, int bombY) {
 			if (bombMap[bombX][bombY].hasBomb()) {
 				//EXPLODE
+				PlaySound(MAKEINTRESOURCE(EXPLODE), NULL, SND_RESOURCE|SND_ASYNC);
 				status = LOSE_GAME;
 				bombMap[bombX][bombY].explode();
 				loseGameBFS(bombX, bombY);
@@ -219,7 +220,7 @@ class Game {
 				time_board.update(&getTimeString()[0], BOLD_FONT, 2);
 				lastClick = make_pair(bombX, bombY);
 				return true;
-			} else cerr << "Outside Box\n";		
+			} else if (DEBUG_MOUSE) cerr << "Outside Box\n";		
 			return false;
 		}
 
@@ -267,7 +268,7 @@ class Game {
 			menu_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-60, "MENU");
 		}
 
-		Game(int game_mode = -1, int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0) {
+		Game(int gm = -1, int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0), game_mode(gm) {
 			assert(num_bomb <= height*width && height <= 30 && width <= 30);
 			backup_time = 0;
 			initMap(height, width);
@@ -287,7 +288,7 @@ class Game {
 			start_time = clock()/1000;
 			if (!(time_file >> backup_time)) return false; 
 
-			if (!(game_file >> height >> width >> num_bomb)) return false;
+			if (!(game_file >> game_mode >> height >> width >> num_bomb)) return false;
 
 			if (!(num_bomb <= height*width && height <= 50 && width <= 50)) return false;
 			initMap(height, width);
@@ -341,7 +342,7 @@ class Game {
 		void saveGame() {
 			ofstream game_file(GameFile::GAME), time_file(GameFile::TIME);
 			time_file << getPlayTime() << '\n';
-			game_file << height << ' ' << width << ' ' << num_bomb << ' ' << '\n';
+			game_file << game_mode << ' ' << height << ' ' << width << ' ' << num_bomb << ' ' << '\n';
 			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) game_file << bombMap[i][j].encode() << " \n"[j == width-1]; 
 			time_file.close();
 			game_file.close();
@@ -356,8 +357,14 @@ class Game {
 				if (menu_butt.checkHover() == Button::CLICKED) return MENU;
 				if (ismouseclick(WM_LBUTTONDOWN)) {
 					has_update |= checkLeftMouseClick(); 
+					if (has_update && status != LOSE_GAME) 
+						PlaySound(MAKEINTRESOURCE(VALID_BOX), NULL, SND_RESOURCE|SND_ASYNC);
+					else if (!lose()) PlaySound(MAKEINTRESOURCE(NONE), NULL, SND_RESOURCE|SND_ASYNC);
 				} else if (ismouseclick(WM_RBUTTONDOWN)) {
-					has_update |= checkRightMouseClick(); 		
+					has_update |= checkRightMouseClick(); 	
+					if (has_update) 
+						PlaySound(MAKEINTRESOURCE(FLAG), NULL, SND_RESOURCE|SND_ASYNC);	
+					else if (!lose()) PlaySound(MAKEINTRESOURCE(NONE), NULL, SND_RESOURCE|SND_ASYNC);
 				} else checkHover();
 
 				++cntLoops;
@@ -405,11 +412,11 @@ class Game {
 				}
 				if (state == MENU) return;
 			}
-
 			if (win() && game_mode != GameMode::NMODE-1) Ranking::insertScore(game_mode, getPlayTime());
 
 			if (choice == -1) {
 				delay(1000);
+				if (win()) PlaySound(MAKEINTRESOURCE(WIN), NULL, SND_RESOURCE|SND_ASYNC);
 				choice = Window::endGameAnnouncement(win());
 			}
 			

@@ -5,6 +5,8 @@
 #include "menu.h"
 #include "constants.h"
 #include "resource.h"
+#include <thread>
+#include <mmsystem.h>
 #include <bits/stdc++.h>
 #include <graphics.h>
 #include <unistd.h>

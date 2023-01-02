@@ -63,7 +63,7 @@ namespace Ranking {
 			drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, left, WINDOW_HEIGHT/2-150, left+200, WINDOW_HEIGHT/2-100);
 			setcolor(WHITE);
 			outtextxy(left+100, WINDOW_HEIGHT/2-120, &GameMode::CAPTION[game_mode][0]);
-			cerr << data[game_mode].size() << '\n';
+			// cerr << data[game_mode].size() << '\n';
 			for(int i = 0, bot = WINDOW_HEIGHT/2-100; i < NRANK; ++i, bot += 50) {
 				drawFrame(MyColor::GAME_BG, MyColor::BORDER, left, bot, left+200, bot+50);
 				setcolor(WHITE);
@@ -79,7 +79,7 @@ namespace Ranking {
 	}
 
 	void insertScore(int game_mode, int score) {
-		cerr << "Inserting new score: " << score << '\n';
+		// cerr << "Inserting new score: " << score << '\n';
 		data[game_mode].push_back(score);
 		sort(data[game_mode].begin(), data[game_mode].end());
 		data[game_mode].resize(NRANK);

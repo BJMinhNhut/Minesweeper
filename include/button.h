@@ -41,7 +41,7 @@ class Button {
 				while (ismouseclick(WM_LBUTTONDOWN)) {
 					int x, y; getmouseclick(WM_LBUTTONDOWN, x, y);
 					if (contain(x, y)) {
-						if (play_sound) PlaySound(MAKEINTRESOURCE(click), NULL, SND_RESOURCE|SND_ASYNC);
+						if (play_sound) PlaySound(MAKEINTRESOURCE(CLICK), NULL, SND_RESOURCE|SND_SYNC);
 						return CLICKED;
 					}
 				}

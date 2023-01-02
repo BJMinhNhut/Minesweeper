@@ -16,6 +16,7 @@ void printTitle() {
 
 void printStartMenu() {
 	while (1) {
+		PlaySound(MAKEINTRESOURCE(MENU_BGM), NULL, SND_RESOURCE|SND_LOOP|SND_ASYNC);
 		setbkcolor(MyColor::GAME_BG);
 		cleardevice();
 

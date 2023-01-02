@@ -33,3 +33,9 @@
 *.exe
 *.out
 *.app
+
+# Audio
+*.wav
+
+# Resource
+*.res
