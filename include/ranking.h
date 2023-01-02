@@ -59,8 +59,8 @@ namespace Ranking {
 		clearmouseclick(WM_LBUTTONDOWN);
 		setbkcolor(MyColor::GAME_BG);
 		cleardevice();
-		Button returnButt(100, 30, WINDOW_WIDTH/2-70, WINDOW_HEIGHT - 50, "RETURN");
-		Button resetButt(100, 30, WINDOW_WIDTH/2+70, WINDOW_HEIGHT - 50, "RESET");
+		Button returnButt(100, 30, WINDOW_WIDTH/2+70, WINDOW_HEIGHT - 50, "RETURN");
+		Button resetButt(100, 30, WINDOW_WIDTH/2-70, WINDOW_HEIGHT - 50, "RESET");
 		
 		// ranking table
 		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, WINDOW_WIDTH/2-400, WINDOW_HEIGHT/2-200, WINDOW_WIDTH/2+400, WINDOW_HEIGHT/2-150);

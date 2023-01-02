@@ -1,0 +1,11 @@
+Author: Dang Minh Nhut - 22125071 - 22TT1 - HCMUS
+
+This is a game made for the CS161 final project based on 
+Microsoft's Minesweeper game using C++ and graphics.h 
+library. It was developed from October 2022 to January 2023.
+
+Features:
+- 5 game modes: Weak, Fit, Strong, Superhero, Custom 
+- Continue unfinished game in previous session
+- Save best finished play time
+- Game sound 

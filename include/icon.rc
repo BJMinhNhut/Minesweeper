@@ -1,0 +1,6 @@
+#ifndef _ICON_RC_
+#define _ICON_RC_
+
+MAINICON ICON "assets\\favicon.ico"
+
+#endif

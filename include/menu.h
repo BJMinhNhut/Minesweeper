@@ -7,6 +7,7 @@
 #include "input.h"
 #include "ranking.h"
 #include "game.h"
+#include "about.h"
 #include <bits/stdc++.h>
 
 class Menu {
@@ -114,8 +115,14 @@ class Menu {
 			Button rankingButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "HALL OF FAME");
 			rankingButt.draw();
 
-			//Exit Game Button
+			// About button 
 			curY += rankingButt.getHeight() + 10;
+			Button aboutButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "ABOUT");
+			aboutButt.draw();
+
+
+			//Exit Game Button
+			curY += aboutButt.getHeight() + 10;
 			Button exitGameButt(MENU_WIDTH, MENU_HEIGHT, midx, curY, "EXIT");
 			exitGameButt.draw();
 
@@ -141,6 +148,9 @@ class Menu {
 				} else if (exitGameButt.checkHover() == Button::CLICKED) {
 					clicked_button = true;
 					exit(EXIT_SUCCESS);
+				} else if (aboutButt.checkHover() == Button::CLICKED) {
+					clicked_button = true;
+					About::display();
 				}
 
 				if (clicked_button) break;

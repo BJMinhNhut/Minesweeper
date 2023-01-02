@@ -1,4 +1,5 @@
 #include "include/headers.h"
+
 using namespace std;
 
 /* Define debug */
@@ -29,14 +30,14 @@ void printStartMenu() {
 	getch();	
 }
 
-int main()
+int main(...)
 {
 	initwindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+
 	mkdir("savefiles");
 	Ranking::loadRanking();
 	printStartMenu();
 	Ranking::saveRanking();
-	while (1){}
    	closegraph();
    	return 0;
 }
