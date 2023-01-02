@@ -20,7 +20,7 @@ class Game {
 		int start_time, backup_time;
 		int status;
 		pair<int, int> lastClick;
-		ScoreBoard time_board, flag_board;
+		ScoreBoard time_board, flag_board, best_board, mode_board;
 		Button restart_butt, menu_butt;
 		int game_mode;
 
@@ -247,8 +247,18 @@ class Game {
 			game_file.clear();
 			time_file.clear();
 		}
-	
-	public:
+
+		int getCorrectFlag() {
+			int ans = 0;
+			for(int i = 0; i < height; ++i) for(int j = 0; j < width; ++j) {
+				if (bombMap[i][j].hasBomb() && bombMap[i][j].isFlagged()) ++ans;
+			}
+			return ans;
+		}
+
+		string getGameDescription() {
+			return to_string(height) + "x" + to_string(width) + ", " + to_string(num_bomb) + " bombs";
+		}
 
 		void initMap(int height, int width) {
 			bombMap.assign(height, vector<Box>(width, Box()));
@@ -261,12 +271,18 @@ class Game {
 		}
 
 		void initVar() {
+			int midx = WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2;
 			start_time = clock()/1000;
-			time_board = ScoreBoard("TIME", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
-			flag_board = ScoreBoard("FLAGS", WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
-			restart_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-100, "RESTART");
-			menu_butt = Button(SCOREBOARD_WIDTH, 30, WINDOW_WIDTH - (SCOREBOARD_WIDTH + 2*MAP_PADDING)/2, WINDOW_HEIGHT-60, "MENU");
+			mode_board = ScoreBoard("MODE", midx, WINDOW_HEIGHT/2 - 3*SCOREBOARD_HEIGHT/2 - 30, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			best_board = ScoreBoard("BEST", midx, WINDOW_HEIGHT/2 - SCOREBOARD_HEIGHT/2 - 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			time_board = ScoreBoard("TIME", midx, WINDOW_HEIGHT/2 + SCOREBOARD_HEIGHT/2 + 10, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			flag_board = ScoreBoard("FLAGS", midx, WINDOW_HEIGHT/2 + 3*SCOREBOARD_HEIGHT/2 + 30, SCOREBOARD_HEIGHT, SCOREBOARD_WIDTH);
+			
+			restart_butt = Button(SCOREBOARD_WIDTH, 30, midx, WINDOW_HEIGHT-100, "RESTART");
+			menu_butt = Button(SCOREBOARD_WIDTH, 30, midx, WINDOW_HEIGHT-60, "MENU");
 		}
+
+	public:
 
 		Game(int gm = -1, int h = DEBUG_HEIGHT, int w = DEBUG_WIDTH, int b = DEBUG_BOMB): height(h), width(w), num_bomb(b), status(ON_GOING), num_flag(0), game_mode(gm) {
 			assert(num_bomb <= height*width && height <= 30 && width <= 30);
@@ -323,8 +339,10 @@ class Game {
 			setcolor(MyColor::BORDER);
 			line(GAME_WIDTH + 2*MAP_PADDING, 0, GAME_WIDTH + 2*MAP_PADDING, WINDOW_HEIGHT);
 
+			best_board.display(&Ranking::getBestTime(game_mode)[0], BOLD_FONT, 2);	
 			time_board.display(&getTimeString()[0], BOLD_FONT, 2);
 			flag_board.display(&getBombLeft()[0], BOLD_FONT, 2);
+			mode_board.display(&(GameMode::CAPTION[game_mode])[0], BOLD_FONT, 2);
 		}
 		
 		void display() {
@@ -413,11 +431,16 @@ class Game {
 				if (state == MENU) return;
 			}
 			if (win() && game_mode != GameMode::NMODE-1) Ranking::insertScore(game_mode, getPlayTime());
-
+			
+			string play_time = getTimeString();
 			if (choice == -1) {
-				delay(1000);
-				if (win()) PlaySound(MAKEINTRESOURCE(WIN), NULL, SND_RESOURCE|SND_ASYNC);
-				choice = Window::endGameAnnouncement(win());
+				delay(2000);
+				if (win()) {
+					PlaySound(MAKEINTRESOURCE(WIN), NULL, SND_RESOURCE|SND_ASYNC);
+					choice = Window::winGameAnnouncement(game_mode, getGameDescription(), play_time, Ranking::getBestTime(game_mode));
+				} else {
+					choice = Window::loseGameAnnouncement(game_mode, getGameDescription(), getCorrectFlag());
+				}
 			}
 			
 			if (choice == Window::RESTART) {

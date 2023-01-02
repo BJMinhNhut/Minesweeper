@@ -9,29 +9,119 @@ namespace Window {
 	const int CONTINUE = 1, NEW = 0, RETURN = 2, RESTART = 3; 
 	char *TITLE[2] = {"GAME OVER", "CONGRATULATIONS!"};
 
-	int endGameAnnouncement(bool win) {
+	int loseGameAnnouncement(int game_mode, string game_descrip, int flag) {
+		bool win = false;
 		clearmouseclick(WM_LBUTTONDOWN);
-		char *title;
 
-		int midx = WINDOW_WIDTH/2, midy = WINDOW_HEIGHT/2;
+		int midx = (GAME_WIDTH + 2*MAP_PADDING)/2, midy = WINDOW_HEIGHT/2;
 
 		SetTextStyle(BOLD_FONT, HORIZ_DIR, 5);
 
-		Button menu_butt(100, 30, midx - 70, midy + textheight(TITLE[win]), "MENU");
-		Button restart_butt(100, 30, midx + 70, midy + textheight(TITLE[win]), "RESTART");
-
-		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-textwidth(TITLE[win])-10, midy-textheight(TITLE[win])-10, midx+textwidth(TITLE[win])+10, midy + textheight(TITLE[win]) + menu_butt.getHeight() + 10);
+		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-270, midy-textheight(TITLE[win])-100, midx+270, midy + textheight(TITLE[win]) + 120);
 		
 		setbkcolor(MyColor::WINDOW_BG);
 		setcolor(MyColor::WINDOW_TEXT);
-		outtextxy(midx, midy, TITLE[win]);
+
+		int cury = midy-70;
+		outtextxy(midx, cury, TITLE[win]);
+
+		cury += 50;
+		SetTextStyle(BOLD_FONT, HORIZ_DIR, 2);
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Game mode:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(GameMode::CAPTION[game_mode])[0]);
+
+		cury += 30;
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Properties:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(game_descrip)[0]);
+
+		cury += 30;
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Correct flags:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(to_string(flag))[0]);
+
+		cury += 60;
+
+		Button menu_butt(100, 30, midx - 70, cury, "MENU");
+		Button restart_butt(100, 30, midx + 70, cury, "RESTART");
+
+
 		menu_butt.draw();
 		restart_butt.draw();
 
 		while (1) {
 			if (menu_butt.checkHover() == Button::CLICKED) return RETURN;
 			if (restart_butt.checkHover() == Button::CLICKED) return RESTART;
+		}
+	}
 
+	int winGameAnnouncement(int game_mode, string game_descrip, string play_time, string best_time) {
+		bool win = true;
+		clearmouseclick(WM_LBUTTONDOWN);
+
+		int midx = (GAME_WIDTH + 2*MAP_PADDING)/2, midy = WINDOW_HEIGHT/2;
+
+		SetTextStyle(BOLD_FONT, HORIZ_DIR, 5);
+
+		drawFrame(MyColor::WINDOW_BG, MyColor::BORDER, midx-270, midy-textheight(TITLE[win])-100, 
+					midx+270, midy + textheight(TITLE[win]) + 140 - 30*(game_mode >= GameMode::NMODE-1));
+		
+		setbkcolor(MyColor::WINDOW_BG);
+		setcolor(MyColor::WINDOW_TEXT);
+
+		int cury = midy-70;
+		outtextxy(midx, cury, TITLE[win]);
+
+		cury += 50;
+		SetTextStyle(BOLD_FONT, HORIZ_DIR, 2);
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Game mode:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(GameMode::CAPTION[game_mode])[0]);
+
+		cury += 30;
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Properties:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(game_descrip)[0]);
+
+		cury += 30;
+		settextjustify(LEFT_TEXT, CENTER_TEXT);
+		outtextxy(midx-200, cury, "Play time:");
+
+		settextjustify(RIGHT_TEXT, CENTER_TEXT);
+		outtextxy(midx+200, cury, &(play_time)[0]);
+
+		if (game_mode < GameMode::NMODE-1) {
+			cury += 30;
+			settextjustify(LEFT_TEXT, CENTER_TEXT);
+			outtextxy(midx-200, cury, "Best time:");
+
+			settextjustify(RIGHT_TEXT, CENTER_TEXT);
+			outtextxy(midx+200, cury, &(best_time)[0]);
+		}
+
+		cury += 60;
+
+		Button menu_butt(100, 30, midx - 70, cury, "MENU");
+		Button restart_butt(100, 30, midx + 70, cury, "RESTART");
+
+
+		menu_butt.draw();
+		restart_butt.draw();
+
+		while (1) {
+			if (menu_butt.checkHover() == Button::CLICKED) return RETURN;
+			if (restart_butt.checkHover() == Button::CLICKED) return RESTART;
 		}
 	}
 

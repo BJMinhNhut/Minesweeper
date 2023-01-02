@@ -49,6 +49,11 @@ namespace Ranking {
 		sprintf(ans, "%02d:%02d", play_time/60, play_time%60);
 		return ans;
 	}
+
+	string getBestTime(int game_mode) {
+		if (game_mode >= GameMode::NMODE-1 || *data[game_mode].begin() == INF) return "-";
+		return getTimeString(*data[game_mode].begin());
+	}
 	
 	void displayRanking() {
 		clearmouseclick(WM_LBUTTONDOWN);
