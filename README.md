@@ -20,21 +20,6 @@ library. It was developed from October 2022 to January 2023.
 git clone https://github.com/BJMinhNhut/Minesweeper.git
 cd Minesweeper
 ```
-### b. Set up
-#### On Windows Powershell
-```
-.\setup
-```
-#### On Command Prompt
-```
-setup
-```
-### c. Run game
-#### On Windows Powershell
-```
-.\Minesweeper
-```
-#### On Command Prompt
-```
-Minesweeper
-```
+### b. Set up and run 
+1. Run `setup.bat` to compile source code 
+2. Run the generated file `Minesweeper.exe` to open the game. 
