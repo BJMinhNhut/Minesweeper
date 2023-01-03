@@ -11,7 +11,7 @@ library. It was developed from October 2022 to January 2023.
 - Save best finished play time
 - Game sound 
 
-## Youtube demo
+## Demo video
 [![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/hqdefault.jpg)](https://youtu.be/4dfjIGfTMjc)
 
 ## Set up instruction for Windows
@@ -24,3 +24,6 @@ In case you want to compile the source code, here is the instruction.
 2. Go to cloned folder or unzip download zip file.
 3. Run `setup.bat` to compile source code 
 4. Run the generated file `Minesweeper.exe` to open the game. 
+
+## Document 
+For my report document, you can view it [here](https://docs.google.com/document/d/1MkVS1yU-i3NFV7AWG_X1vQl2QzYqT4wi/edit?usp=sharing&ouid=109700764177977380592&rtpof=true&sd=true).
