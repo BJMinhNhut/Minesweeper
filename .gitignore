@@ -39,3 +39,6 @@
 
 # Save folder
 savefiles/
+
+## VS code folder
+.vscode/
