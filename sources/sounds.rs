@@ -1,3 +1,6 @@
+#ifndef _SOUND_RS_
+#define _SOUND_RS_
+
 #include "resource.h"
 
 CLICK WAVE "assets\\click.wav"
@@ -7,3 +10,5 @@ VALID_BOX WAVE "assets\\valid.wav"
 WIN WAVE "assets\\win.wav"
 FLAG WAVE "assets\\flag.wav"
 NONE WAVE "assets\\none.wav"
+
+#endif
