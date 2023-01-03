@@ -35,7 +35,7 @@ class InputBox {
 					updated = true;
 				}
 				if (ch == 8) {
-					val = max(min_val, val/10);
+					val = val/10;
 					updated = true;
 				}
 				if (ch == '\r') break;
@@ -48,6 +48,10 @@ class InputBox {
 		}
 		main_box.draw(MyColor::WINDOW_BG, WHITE);
 		while (main_box.contain(mousex(), mousey())) {}
+
+		val = max(min_val, val);
+		main_box.setContent(getStringVal());
+		main_box.updateContent(MyColor::WINDOW_BG, WHITE);
 	}
 
 	bool checkButton(Button &butt, int delta) {
@@ -59,6 +63,7 @@ class InputBox {
 			main_box.setContent(getStringVal());
 			main_box.updateContent(MyColor::WINDOW_BG, WHITE);
 		}
+
 		return updated;
 	}
 

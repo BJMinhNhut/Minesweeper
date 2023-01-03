@@ -26,22 +26,11 @@ class Box {
 			sprintf(display_num, "%d", num);
 			setbkcolor(MyColor::REVEAL);
 			setcolor(getColorOnScale(num));
-			SetTextStyle(getFontType(), HORIZ_DIR, getFontSize());
+			SetTextStyle(BOLD_FONT, HORIZ_DIR, getFontSize());
 			settextjustify(CENTER_TEXT, CENTER_TEXT);
 
 			int height = textheight(display_num);
 			outtextxy((left+right)>>1, (top+bot+height/2)>>1, display_num);
-			setbkcolor(BLACK);
-		}
-
-		void printChar(int bg_color, int color, char *display_obj) {
-			setbkcolor(bg_color);
-			setcolor(color);
-			SetTextStyle(getFontType(), HORIZ_DIR, getFontSize());
-			settextjustify(CENTER_TEXT, CENTER_TEXT);
-
-			int height = textheight(display_obj);
-			outtextxy((left+right)>>1, (top+bot+height/2)>>1, display_obj);
 			setbkcolor(BLACK);
 		}
 
@@ -85,11 +74,6 @@ class Box {
 			else if (bot-top > 25) return 2;
 			else if (bot-top >= 20) return 1;
 			else return 4;
-		}
-
-		int getFontType() {
-			if (bot-top < 15) return SMALL_FONT;
-			else return BOLD_FONT;
 		}
 
 		bool isClicked(int x, int y) {
