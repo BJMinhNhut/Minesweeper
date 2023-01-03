@@ -49,8 +49,8 @@ namespace Window {
 
 		cury += 60;
 
-		Button menu_butt(100, 30, midx - 70, cury, "MENU");
-		Button restart_butt(100, 30, midx + 70, cury, "RESTART");
+		Button menu_butt(120, 30, midx - 70, cury, "MENU");
+		Button restart_butt(120, 30, midx + 70, cury, "RESTART");
 
 
 		menu_butt.draw();
@@ -112,8 +112,8 @@ namespace Window {
 
 		cury += 60;
 
-		Button menu_butt(100, 30, midx - 70, cury, "MENU");
-		Button restart_butt(100, 30, midx + 70, cury, "RESTART");
+		Button menu_butt(120, 30, midx - 70, cury, "MENU");
+		Button restart_butt(120, 30, midx + 70, cury, "RESTART");
 
 
 		menu_butt.draw();

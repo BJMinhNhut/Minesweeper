@@ -15,11 +15,14 @@ library. It was developed from October 2022 to January 2023.
 [![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/hqdefault.jpg)](https://youtu.be/4dfjIGfTMjc)
 
 ## Set up instruction for Windows
-### a. Clone git repository
+In case you want to compile the source code, here is the instruction.
+### a. Install MinGW and change environment variables
+###	b. Install graphics.h
+### c. Clone git repository
 ```cmd
 git clone https://github.com/BJMinhNhut/Minesweeper.git
 cd Minesweeper
 ```
-### b. Set up and run 
+### d. Set up and run 
 1. Run `setup.bat` to compile source code 
 2. Run the generated file `Minesweeper.exe` to open the game. 

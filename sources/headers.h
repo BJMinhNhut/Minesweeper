@@ -11,5 +11,6 @@
 #include <graphics.h>
 #include <unistd.h>
 #pragma comment (lib, "winmm.lib")
+#pragma comment (lib, "libbgi.a")
 
 #endif
