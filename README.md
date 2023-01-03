@@ -20,21 +20,21 @@ library. It was developed from October 2022 to January 2023.
 git clone https://github.com/BJMinhNhut/Minesweeper.git
 cd Minesweeper
 ```
-### b. Build resources
-```cmd
-windres sounds.rs -O coff -o sounds.res
-windres icon.rc -O coff -o icon.res
+### b. Set up
+#### On Windows Powershell
 ```
-### c. Compile 
-```cmd
-g++ main.cpp include\sounds.res include\icon.res -o Minesweeper -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -static -static-libgcc -static-libstdc++ -O2 -lwinmm -mwindows
+.\setup
 ```
-### d. Run game
-#### i.	On Windows Powershell
-```cmd
+#### On Command Prompt
+```
+setup
+```
+### c. Run game
+#### On Windows Powershell
+```
 .\Minesweeper
 ```
-#### ii.	On Command Prompt
+#### On Command Prompt
 ```
 Minesweeper
 ```
