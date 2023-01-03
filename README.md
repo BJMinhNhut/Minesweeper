@@ -18,7 +18,7 @@ library. It was developed from October 2022 to January 2023.
 In case you want to compile the source code, here is the instruction.
 ### Requirement 
 - Install MinGW and change environment variables (use [this instruction](https://www.geeksforgeeks.org/installing-mingw-tools-for-c-c-and-changing-environment-variable/))
-- Install graphics.h (use [this instruction](https://github.com/BJMinhNhut/graphics.h))
+- Install `graphics.h` (use [this instruction](https://github.com/BJMinhNhut/graphics.h))
 ### Set up
 1. Clone git repository or download zip file.
 2. Go to cloned folder or unzip download zip file.
