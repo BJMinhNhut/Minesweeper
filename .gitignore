@@ -30,8 +30,12 @@
 *.lib
 
 # Executables
+*.exe
 *.out
 *.app
+
+# Resource
+*.res
 
 # Save folder
 savefiles/
