@@ -3,15 +3,13 @@
 
 #include "constants.h"
 #include <graphics.h>
-#include <bits/stdc++.h>
-using namespace std;
 
 #define MASK(s) (1ll<<(s))
 #define BIT(s, i) (((s)>>(i))&1)
 
 class Box {
 	private:
-		static const int HIDDEN = 0, REVEALED = 1, FLAGGED = 2;
+		static const int HIDDEN = 0, REVEALED = 1, FLAGGED  = 2;
 		int left, top, right, bot;
 		int adj_bomb_num;
 		bool has_bomb;
