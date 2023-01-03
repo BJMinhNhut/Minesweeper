@@ -12,7 +12,7 @@ library. It was developed from October 2022 to January 2023.
 - Game sound 
 
 ## Youtube demo
-[![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/default.jpg)](https://youtu.be/4dfjIGfTMjc)
+[![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/hqdefault.jpg)](https://youtu.be/4dfjIGfTMjc)
 
 ## Compile instruction for Windows
 ### a. Clone git repository
