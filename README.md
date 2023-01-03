@@ -14,7 +14,7 @@ library. It was developed from October 2022 to January 2023.
 ## Youtube demo
 [![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/hqdefault.jpg)](https://youtu.be/4dfjIGfTMjc)
 
-## Compile instruction for Windows
+## Set up instruction for Windows
 ### a. Clone git repository
 ```cmd
 git clone https://github.com/BJMinhNhut/Minesweeper.git
