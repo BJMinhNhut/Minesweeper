@@ -5,11 +5,14 @@ This is a game made for the CS161 final project based on
 Microsoft's Minesweeper game using C++ and graphics.h 
 library. It was developed from October 2022 to January 2023.
 
-Features:
+## Features
 - 5 game modes: Weak, Fit, Strong, Superhero, Custom 
 - Continue unfinished game in previous session
 - Save best finished play time
 - Game sound 
+
+## Youtube demo
+[![Watch the video](https://img.youtube.com/vi/4dfjIGfTMjc/default.jpg)](https://youtu.be/4dfjIGfTMjc)
 
 ## Compile instruction for Windows
 ### a. Clone git repository
